@@ -2,6 +2,7 @@ import logo from "./logo.svg";
 import "./App.css";
 import Button from "react-bootstrap/Button";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Web3 from "web3";
 
 function App() {
   return (
@@ -22,7 +23,7 @@ function App() {
               id="wallet-address"
               style={{ marginTop: "3px", boxShadow: "1px 1px 4px #000000" }}
             >
-              <label style={{ color: "#FFFFFF" }} for="floating Input">
+              <label style={{ color: "#000000" }} for="floating Input">
                 Wallet Address
               </label>
               <input
@@ -32,7 +33,7 @@ function App() {
                 min="1"
                 max="5"
               />
-              <label style={{ color: "#FFFFFF" }}>
+              <label style={{ color: "#000000" }}>
                 Please select the amount of NFTS to mint.
               </label>
               <Button>Mint/Buy</Button>

@@ -1,4 +1,4 @@
-# NFT Viewer
+# NFT Minter
 
 ## Commands
 
