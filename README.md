@@ -8,3 +8,4 @@
 - npm i web3
 - npm i ethers
 - npm install react-bootstrap bootstrap@5.1.3
+- brew install --cask ipfs

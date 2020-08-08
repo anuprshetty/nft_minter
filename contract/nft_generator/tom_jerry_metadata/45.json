@@ -1,0 +1,20 @@
+{
+    "name": "#45 - Tom and Jerry NFT Image",
+    "description": "Tom and Jerry NFT Collection",
+    "image": "ipfs://QmUigaPTRSTNvtcReHu6he1t7oa16i9vGoi4KR1bWY68w7/45.png",
+    "edition": "1",
+    "attributes": [
+        {
+            "trait_type": "Background",
+            "value": "white"
+        },
+        {
+            "trait_type": "Tom Color",
+            "value": "Gray"
+        },
+        {
+            "trait_type": "Jerry Color",
+            "value": "Brown"
+        }
+    ]
+}
