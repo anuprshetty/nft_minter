@@ -1,3 +1,9 @@
+# Steps:
+# - Run below script which generates NFT images
+# - Upload the images manually to IPFS using IPFS desktop app
+# - Pin those images in IPFS so that other nodes can access them
+# - Access them using CID --> https://ipfs.io/ipfs/QmVtQmD6nZC3mLfwXWz579u6GZoLuexFM3tiSGUSFN4oEJ?filename=1.png
+
 import os
 from shutil import copyfile
 

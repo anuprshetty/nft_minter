@@ -1,3 +1,11 @@
+# Steps:
+# - update image_folder_cid in this script
+# - Run this script to generate NFT metadata
+# - Upload NFT metadata to IPFS manulally using IPFS desktop app
+# - Pin files so that other nodes in the IPFS network can access them
+# - Access them using CID --> https://ipfs.io/ipfs/QmdVwL4gL9HsKu6gm481VUyHg1rmtzTBTyuKLhJJcuWCe7?filename=1.json
+# - Update this CID in NFT minter smart contract
+
 import os
 import json
 
