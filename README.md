@@ -17,3 +17,4 @@
 - npm install --save-dev hardhat
 - npx hardhat --> initial project setup
 - npx hardhat node --> a local node is created with a built-in blockchain that can be used to simulate transactions and interactions with smart contracts. The node also has pre-funded accounts with test ether, which can be used for testing transactions without spending real money.
+- npx hardhat compile
