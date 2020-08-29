@@ -130,11 +130,7 @@ interface IERC721 is IERC165 {
      *
      * Emits a {Transfer} event.
      */
-    function transferFrom(
-        address from,
-        address to,
-        uint256 tokenId
-    ) external;
+    function transferFrom(address from, address to, uint256 tokenId) external;
 
     /**
      * @dev Gives permission to `to` to transfer `tokenId` token to another account.
@@ -158,10 +154,9 @@ interface IERC721 is IERC165 {
      *
      * - `tokenId` must exist.
      */
-    function getApproved(uint256 tokenId)
-        external
-        view
-        returns (address operator);
+    function getApproved(
+        uint256 tokenId
+    ) external view returns (address operator);
 
     /**
      * @dev Approve or remove `operator` as an operator for the caller.
@@ -180,10 +175,10 @@ interface IERC721 is IERC165 {
      *
      * See {setApprovalForAll}
      */
-    function isApprovedForAll(address owner, address operator)
-        external
-        view
-        returns (bool);
+    function isApprovedForAll(
+        address owner,
+        address operator
+    ) external view returns (bool);
 
     /**
      * @dev Safely transfers `tokenId` token from `from` to `to`.
@@ -224,10 +219,10 @@ interface IERC721Enumerable is IERC721 {
      * @dev Returns a token ID owned by `owner` at a given `index` of its token list.
      * Use along with {balanceOf} to enumerate all of ``owner``'s tokens.
      */
-    function tokenOfOwnerByIndex(address owner, uint256 index)
-        external
-        view
-        returns (uint256 tokenId);
+    function tokenOfOwnerByIndex(
+        address owner,
+        uint256 index
+    ) external view returns (uint256 tokenId);
 
     /**
      * @dev Returns a token ID at a given `index` of all the tokens stored by the contract.
@@ -258,13 +253,9 @@ abstract contract ERC165 is IERC165 {
     /**
      * @dev See {IERC165-supportsInterface}.
      */
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override
-        returns (bool)
-    {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view virtual override returns (bool) {
         return interfaceId == type(IERC165).interfaceId;
     }
 }
@@ -323,11 +314,10 @@ library Strings {
     /**
      * @dev Converts a `uint256` to its ASCII `string` hexadecimal representation with fixed length.
      */
-    function toHexString(uint256 value, uint256 length)
-        internal
-        pure
-        returns (string memory)
-    {
+    function toHexString(
+        uint256 value,
+        uint256 length
+    ) internal pure returns (string memory) {
         bytes memory buffer = new bytes(2 * length + 2);
         buffer[0] = "0";
         buffer[1] = "x";
@@ -424,10 +414,10 @@ library Address {
      *
      * _Available since v3.1._
      */
-    function functionCall(address target, bytes memory data)
-        internal
-        returns (bytes memory)
-    {
+    function functionCall(
+        address target,
+        bytes memory data
+    ) internal returns (bytes memory) {
         return functionCall(target, data, "Address: low-level call failed");
     }
 
@@ -500,11 +490,10 @@ library Address {
      *
      * _Available since v3.3._
      */
-    function functionStaticCall(address target, bytes memory data)
-        internal
-        view
-        returns (bytes memory)
-    {
+    function functionStaticCall(
+        address target,
+        bytes memory data
+    ) internal view returns (bytes memory) {
         return
             functionStaticCall(
                 target,
@@ -536,10 +525,10 @@ library Address {
      *
      * _Available since v3.4._
      */
-    function functionDelegateCall(address target, bytes memory data)
-        internal
-        returns (bytes memory)
-    {
+    function functionDelegateCall(
+        address target,
+        bytes memory data
+    ) internal returns (bytes memory) {
         return
             functionDelegateCall(
                 target,
@@ -687,13 +676,9 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev See {IERC165-supportsInterface}.
      */
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override(ERC165, IERC165)
-        returns (bool)
-    {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view virtual override(ERC165, IERC165) returns (bool) {
         return
             interfaceId == type(IERC721).interfaceId ||
             interfaceId == type(IERC721Metadata).interfaceId ||
@@ -703,13 +688,9 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev See {IERC721-balanceOf}.
      */
-    function balanceOf(address owner)
-        public
-        view
-        virtual
-        override
-        returns (uint256)
-    {
+    function balanceOf(
+        address owner
+    ) public view virtual override returns (uint256) {
         require(
             owner != address(0),
             "ERC721: balance query for the zero address"
@@ -720,13 +701,9 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev See {IERC721-ownerOf}.
      */
-    function ownerOf(uint256 tokenId)
-        public
-        view
-        virtual
-        override
-        returns (address)
-    {
+    function ownerOf(
+        uint256 tokenId
+    ) public view virtual override returns (address) {
         address owner = _owners[tokenId];
         require(
             owner != address(0),
@@ -752,13 +729,9 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev See {IERC721Metadata-tokenURI}.
      */
-    function tokenURI(uint256 tokenId)
-        public
-        view
-        virtual
-        override
-        returns (string memory)
-    {
+    function tokenURI(
+        uint256 tokenId
+    ) public view virtual override returns (string memory) {
         require(
             _exists(tokenId),
             "ERC721Metadata: URI query for nonexistent token"
@@ -798,13 +771,9 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev See {IERC721-getApproved}.
      */
-    function getApproved(uint256 tokenId)
-        public
-        view
-        virtual
-        override
-        returns (address)
-    {
+    function getApproved(
+        uint256 tokenId
+    ) public view virtual override returns (address) {
         require(
             _exists(tokenId),
             "ERC721: approved query for nonexistent token"
@@ -816,11 +785,10 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev See {IERC721-setApprovalForAll}.
      */
-    function setApprovalForAll(address operator, bool approved)
-        public
-        virtual
-        override
-    {
+    function setApprovalForAll(
+        address operator,
+        bool approved
+    ) public virtual override {
         require(operator != _msgSender(), "ERC721: approve to caller");
 
         _operatorApprovals[_msgSender()][operator] = approved;
@@ -830,13 +798,10 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
     /**
      * @dev See {IERC721-isApprovedForAll}.
      */
-    function isApprovedForAll(address owner, address operator)
-        public
-        view
-        virtual
-        override
-        returns (bool)
-    {
+    function isApprovedForAll(
+        address owner,
+        address operator
+    ) public view virtual override returns (bool) {
         return _operatorApprovals[owner][operator];
     }
 
@@ -934,12 +899,10 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
      *
      * - `tokenId` must exist.
      */
-    function _isApprovedOrOwner(address spender, uint256 tokenId)
-        internal
-        view
-        virtual
-        returns (bool)
-    {
+    function _isApprovedOrOwner(
+        address spender,
+        uint256 tokenId
+    ) internal view virtual returns (bool) {
         require(
             _exists(tokenId),
             "ERC721: operator query for nonexistent token"
@@ -1160,13 +1123,9 @@ abstract contract ERC721Enumerable is ERC721, IERC721Enumerable {
     /**
      * @dev See {IERC165-supportsInterface}.
      */
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override(IERC165, ERC721)
-        returns (bool)
-    {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view virtual override(IERC165, ERC721) returns (bool) {
         return
             interfaceId == type(IERC721Enumerable).interfaceId ||
             super.supportsInterface(interfaceId);
@@ -1175,13 +1134,10 @@ abstract contract ERC721Enumerable is ERC721, IERC721Enumerable {
     /**
      * @dev See {IERC721Enumerable-tokenOfOwnerByIndex}.
      */
-    function tokenOfOwnerByIndex(address owner, uint256 index)
-        public
-        view
-        virtual
-        override
-        returns (uint256)
-    {
+    function tokenOfOwnerByIndex(
+        address owner,
+        uint256 index
+    ) public view virtual override returns (uint256) {
         require(
             index < ERC721.balanceOf(owner),
             "ERC721Enumerable: owner index out of bounds"
@@ -1199,13 +1155,9 @@ abstract contract ERC721Enumerable is ERC721, IERC721Enumerable {
     /**
      * @dev See {IERC721Enumerable-tokenByIndex}.
      */
-    function tokenByIndex(uint256 index)
-        public
-        view
-        virtual
-        override
-        returns (uint256)
-    {
+    function tokenByIndex(
+        uint256 index
+    ) public view virtual override returns (uint256) {
         require(
             index < ERC721Enumerable.totalSupply(),
             "ERC721Enumerable: global index out of bounds"
@@ -1275,9 +1227,10 @@ abstract contract ERC721Enumerable is ERC721, IERC721Enumerable {
      * @param from address representing the previous owner of the given token ID
      * @param tokenId uint256 ID of the token to be removed from the tokens list of the given address
      */
-    function _removeTokenFromOwnerEnumeration(address from, uint256 tokenId)
-        private
-    {
+    function _removeTokenFromOwnerEnumeration(
+        address from,
+        uint256 tokenId
+    ) private {
         // To prevent a gap in from's tokens array, we store the last token in the index of the token to delete, and
         // then delete the last slot (swap and pop).
 
@@ -1403,7 +1356,8 @@ pragma solidity ^0.8.0;
 
 contract NFTMinter is ERC721Enumerable, Ownable {
     using Strings for uint256;
-    string public baseURI;
+    string public baseURI =
+        "ipfs://QmfWXnEAKP1i95wwiNvPbbaFP3igEBMuzRLByMFGHfkM5m/";
     string public baseExtension = ".json";
     uint256 public cost = 0.0001 ether;
     uint256 public maxSupply = 1000;
@@ -1412,24 +1366,17 @@ contract NFTMinter is ERC721Enumerable, Ownable {
 
     constructor() ERC721("TomAndJerry NFT Collection", "TNJ") {}
 
-    // internal
-    function _baseURI() internal view virtual override returns (string memory) {
-        return "ipfs://QmfWXnEAKP1i95wwiNvPbbaFP3igEBMuzRLByMFGHfkM5m/";
-    }
-
-    // public
-
     function mint(address _to, uint256 _mintAmount) public payable {
         uint256 supply = totalSupply();
-        require(!paused);
-        require(_mintAmount > 0);
-        require(_mintAmount <= maxMintAmount);
-        require(supply + _mintAmount <= maxSupply);
+        require(!paused, "minting is paused");
+        require(_mintAmount > 0, "mint amount is less than 1");
+        require(_mintAmount <= maxMintAmount, "max mint amount exceeded");
+        require((supply + _mintAmount) <= maxSupply, "max supply exceeded");
 
         if (msg.sender != owner()) {
             require(
                 msg.value == cost * _mintAmount,
-                "Need to send 0.0001 ether!"
+                "Need to send 0.0001 ether for each token to be minted"
             );
         }
 
@@ -1438,11 +1385,35 @@ contract NFTMinter is ERC721Enumerable, Ownable {
         }
     }
 
-    function walletOfOwner(address _owner)
-        public
-        view
-        returns (uint256[] memory)
-    {
+    function withdraw() public payable onlyOwner {
+        payable(msg.sender).transfer(address(this).balance);
+    }
+
+    function setmaxMintAmount(uint256 _newmaxMintAmount) public onlyOwner {
+        require(
+            _newmaxMintAmount > 0 && _newmaxMintAmount <= maxSupply,
+            "Invalid maxMintAmount"
+        );
+        maxMintAmount = _newmaxMintAmount;
+    }
+
+    function setBaseURI(string memory _newBaseURI) public onlyOwner {
+        baseURI = _newBaseURI;
+    }
+
+    function setBaseExtension(
+        string memory _newBaseExtension
+    ) public onlyOwner {
+        baseExtension = _newBaseExtension;
+    }
+
+    function pause(bool _state) public onlyOwner {
+        paused = _state;
+    }
+
+    function walletOfOwner(
+        address _owner
+    ) public view returns (uint256[] memory) {
         uint256 ownerTokenCount = balanceOf(_owner);
         uint256[] memory tokenIds = new uint256[](ownerTokenCount);
         for (uint256 i; i < ownerTokenCount; i++) {
@@ -1451,13 +1422,9 @@ contract NFTMinter is ERC721Enumerable, Ownable {
         return tokenIds;
     }
 
-    function tokenURI(uint256 tokenId)
-        public
-        view
-        virtual
-        override
-        returns (string memory)
-    {
+    function tokenURI(
+        uint256 tokenId
+    ) public view virtual override returns (string memory) {
         require(
             _exists(tokenId),
             "ERC721Metadata: URI query for nonexistent token"
@@ -1476,28 +1443,7 @@ contract NFTMinter is ERC721Enumerable, Ownable {
                 : "";
     }
 
-    // only owner
-
-    function setmaxMintAmount(uint256 _newmaxMintAmount) public onlyOwner {
-        maxMintAmount = _newmaxMintAmount;
-    }
-
-    function setBaseURI(string memory _newBaseURI) public onlyOwner {
-        baseURI = _newBaseURI;
-    }
-
-    function setBaseExtension(string memory _newBaseExtension)
-        public
-        onlyOwner
-    {
-        baseExtension = _newBaseExtension;
-    }
-
-    function pause(bool _state) public onlyOwner {
-        paused = _state;
-    }
-
-    function withdraw() public payable onlyOwner {
-        require(payable(msg.sender).send(address(this).balance));
+    function _baseURI() internal view virtual override returns (string memory) {
+        return baseURI;
     }
 }
