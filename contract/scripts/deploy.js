@@ -5,22 +5,23 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require("hardhat");
+const ethernal = require("hardhat-ethernal");
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const unlockTime = currentTimestampInSeconds + 60;
+  const NFTMinter = await hre.ethers.getContractFactory("NFTMinter");
+  const nftMinter = await NFTMinter.deploy();
 
-  const lockedAmount = hre.ethers.utils.parseEther("0.001");
+  await nftMinter.deployed();
 
-  const Lock = await hre.ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
-
-  await lock.deployed();
+  hre.ethernalUploadAst = true;
+  await hre.ethernal.push({
+    name: "NFTMinter",
+    address: nftMinter.address,
+  });
 
   console.log(
-    `Lock with ${ethers.utils.formatEther(
-      lockedAmount
-    )}ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`
+    "NFTMinter contract is deployed at the address: ",
+    nftMinter.address
   );
 }
 
