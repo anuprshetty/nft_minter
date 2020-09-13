@@ -26,4 +26,23 @@ describe("NFTMinter", function () {
   afterEach(async function () {
     // console.log("After a test – exit a test");
   });
+
+  describe("deployment initial state", function () {
+    it("should set the state variables to correct values after contract deployment", async function () {
+      expect(await nftMinter.connect(owner).name()).to.equal(
+        "TomAndJerry NFT Collection"
+      );
+      expect(await nftMinter.connect(owner).symbol()).to.equal("TNJ");
+      expect(await nftMinter.connect(owner).baseURI()).to.equal(
+        "ipfs://QmfWXnEAKP1i95wwiNvPbbaFP3igEBMuzRLByMFGHfkM5m/"
+      );
+      expect(await nftMinter.connect(owner).baseExtension()).to.equal(".json");
+      expect(await nftMinter.connect(owner).cost()).to.equal(
+        ethers.utils.parseEther("0.0001")
+      );
+      expect(await nftMinter.connect(owner).maxSupply()).to.equal(1000);
+      expect(await nftMinter.connect(owner).maxMintAmount()).to.equal(5);
+      expect(await nftMinter.connect(owner).paused()).to.be.false;
+    });
+  });
 });
