@@ -137,4 +137,31 @@ describe("NFTMinter", function () {
       });
     });
   });
+
+  describe("walletOfOwner", function () {
+    it("user wallet should be correct with balance equal to the total number of tokens minted to the user address", async function () {
+      let user2_balance = (
+        await nftMinter.connect(user2).walletOfOwner(user2.address)
+      ).length;
+      expect(user2_balance).to.equal(0);
+
+      await nftMinter.connect(user1).mint(user2.address, 1, {
+        value: ethers.utils.parseEther("0.0001"),
+      });
+      await nftMinter.connect(user1).mint(user2.address, 2, {
+        value: ethers.utils.parseEther("0.0002"),
+      });
+
+      user2_wallet = await nftMinter
+        .connect(user2)
+        .walletOfOwner(user2.address);
+      user2_balance = user2_wallet.length;
+
+      expect(user2_balance).to.equal(3);
+
+      expect(user2_wallet[0]).to.equal(1);
+      expect(user2_wallet[1]).to.equal(2);
+      expect(user2_wallet[2]).to.equal(3);
+    });
+  });
 });
