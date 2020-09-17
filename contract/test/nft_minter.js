@@ -164,4 +164,41 @@ describe("NFTMinter", function () {
       expect(user2_wallet[2]).to.equal(3);
     });
   });
+
+  describe("tokenURI", function () {
+    it("should revert if tokenId doesn't exist", async function () {
+      await expect(nftMinter.connect(user1).tokenURI(0)).to.be.revertedWith(
+        "ERC721Metadata: URI query for nonexistent token"
+      );
+    });
+
+    it("should return empty string if baseURI is empty", async function () {
+      await nftMinter.connect(owner).setBaseURI("");
+      expect(await nftMinter.connect(owner).baseURI()).to.equal("");
+
+      await nftMinter.connect(user1).mint(user1.address, 1, {
+        value: ethers.utils.parseEther("0.0001"),
+      });
+      expect(await nftMinter.connect(user1).totalSupply()).to.equal(1);
+      expect(await nftMinter.connect(user1).balanceOf(user1.address)).to.equal(
+        1
+      );
+
+      expect(await nftMinter.connect(user1).tokenURI(1)).to.be.equal("");
+    });
+
+    it("should return correct tokenURI for the given existing tokenId", async function () {
+      await nftMinter.connect(user1).mint(user1.address, 1, {
+        value: ethers.utils.parseEther("0.0001"),
+      });
+      expect(await nftMinter.connect(user1).totalSupply()).to.equal(1);
+      expect(await nftMinter.connect(user1).balanceOf(user1.address)).to.equal(
+        1
+      );
+
+      expect(await nftMinter.connect(user1).tokenURI(1)).to.be.equal(
+        "ipfs://QmfWXnEAKP1i95wwiNvPbbaFP3igEBMuzRLByMFGHfkM5m/1.json"
+      );
+    });
+  });
 });
