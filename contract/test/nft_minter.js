@@ -248,4 +248,13 @@ describe("NFTMinter", function () {
       );
     });
   });
+
+  describe("setBaseExtension", function () {
+    it("should set the correct baseExtension", async function () {
+      await nftMinter.connect(owner).setBaseExtension(".yml");
+      expect(await nftMinter.connect(owner).baseExtension()).to.be.equal(
+        ".yml"
+      );
+    });
+  });
 });
