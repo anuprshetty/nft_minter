@@ -5,7 +5,6 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require("hardhat");
-const ethernal = require("hardhat-ethernal");
 
 async function main() {
   const NFTMinter = await hre.ethers.getContractFactory("NFTMinter");
@@ -20,7 +19,7 @@ async function main() {
   });
 
   console.log(
-    "NFTMinter contract is deployed at the address: ",
+    "\nNFTMinter contract is deployed at the address: ",
     nftMinter.address
   );
 }
