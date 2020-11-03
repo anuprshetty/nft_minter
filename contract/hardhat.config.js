@@ -9,7 +9,9 @@ module.exports = {
     version: "0.8.18",
   },
   networks: {
-    hardhat: {},
+    hardhat: {
+      initialBaseFeePerGas: 0,
+    },
     ganache: {
       url: "http://127.0.0.1:7545", // Update the URL to match your Ganache network configuration
       accounts: {
