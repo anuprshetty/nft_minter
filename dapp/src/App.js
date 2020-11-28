@@ -3,6 +3,9 @@ import "./App.css";
 import Button from "react-bootstrap/Button";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Web3 from "web3";
+import NFTMinter from "./NFTMinter.json";
+import React, { Component } from "react";
+import { formatBalance, formatChainAsNum } from "./utils";
 /*
 --> default export vs named export:
 import DefaultComponent, { NamedComponent1, NamedComponent2 } from "./components/ComponentFile";
@@ -12,60 +15,34 @@ Ex:
 import AnyNameForDefaultComponent, { NamedComponent1, NamedComponent2 } from "./components/ComponentFile";
 */
 
-function App() {
+/*
+The Component Lifecycle:
+- 1. Mounting:
+  -- “Render phase” --> Pure and has no side effects. May be paused, aborted or restarted by React.
+    --- constructor()
+    --- render()
+  -- “Commit phase” --> Can work with DOM, run side effects, schedule updates.
+    --- React updates DOM and refs
+    --- componentDidMount()
+- 2. Updating:
+  -- “Render phase” --> Pure and has no side effects. May be paused, aborted or restarted by React.
+    --- update happens when any of new props, setState() or forceUpdate() happens.
+    --- render()
+  -- “Commit phase” --> Can work with DOM, run side effects, schedule updates.
+    --- React updates DOM and refs
+    --- componentDidUpdate()
+- 3. Unmounting:
+  -- “Render phase” --> Pure and has no side effects. May be paused, aborted or restarted by React.
+    --- nothing happens
+  -- “Commit phase” --> Can work with DOM, run side effects, schedule updates.
+    --- componentWillUnmount()
+*/
+export default class App extends Component {
   /*
-  --> JSX - JavaScript XML
-  -->  It is an extension to JavaScript syntax that allows you to write HTML-like code within JavaScript.
-  --> JSX is primarily associated with the React library and is commonly used to define the structure and appearance of components in React applications.
-  --> However, it is important to note that JSX is not actual HTML. Instead, it is a syntactic sugar that gets transformed into regular JavaScript function calls during the compilation process.
-  --> Ex: const element = <h1>Hello, JSX!</h1>;
-      After compilation,
-      const element = React.createElement('h1', null, 'Hello, JSX!');
+  The class based component provides 2 special class attributes:
+  - this.props --> for properties object
+  - this.state --> for state object
   */
-  return (
-    <div className="App">
-      <div className="container">
-        <div className="row">
-          <form
-            class="gradient col-lg-5 mt-5"
-            style={{ borderRadius: "25px", boxShadow: "1px 1px 15px #000000" }}
-          >
-            <h4 style={{ color: "#FFFFFF" }}>Mint Portal</h4>
-            <h5 style={{ color: "#FFFFFF" }}>Please connect your wallet</h5>
-            <Button
-              variant="dark"
-              style={{ marginBottom: "5px", color: "#FFFFFF" }}
-            >
-              Connect Wallet
-            </Button>
-            <div
-              class="card"
-              id="wallet-address"
-              style={{ marginTop: "3px", boxShadow: "1px 1px 4px #000000" }}
-            >
-              <label style={{ color: "#000000" }} for="floating Input">
-                Wallet Address
-              </label>
-              <input
-                type="number"
-                name="amount"
-                defaultValue="1"
-                min="1"
-                max="5"
-              />
-              <label style={{ color: "#000000" }}>
-                Please select the amount of NFTS to mint.
-              </label>
-              <Button variant="dark">Mint/Buy</Button>
-            </div>
-            <label style={{ color: "#FFFFFF" }}>
-              Price 0.06 ETH each mint.
-            </label>
-          </form>
-        </div>
-      </div>
-    </div>
-  );
-}
 
-export default App;
+  
+}
