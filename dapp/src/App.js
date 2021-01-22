@@ -53,6 +53,19 @@ export default class App extends Component {
     this.contract = null;
   }
 
+  async componentDidMount() {
+    if (window.ethereum) {
+      console.log("component mounted");
+    } else {
+      console.error("Metamask not installed");
+    }
+  }
+
+  async componentWillUnmount() {
+    window.ethereum?.removeListener("chainChanged", this.refreshPage);
+    window.ethereum?.removeListener("accountsChanged", this.refreshAccounts);
+  }
+
   
 
   render() {
