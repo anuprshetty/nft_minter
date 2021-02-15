@@ -6,6 +6,7 @@ import Web3 from "web3";
 import NFTMinter from "./NFTMinter.json";
 import React, { Component } from "react";
 import { formatBalance, formatChainAsNum } from "./utils";
+import axios from "axios";
 /*
 --> default export vs named export:
 import DefaultComponent, { NamedComponent1, NamedComponent2 } from "./components/ComponentFile";
@@ -49,16 +50,40 @@ export default class App extends Component {
 
     this.state = {
       wallet: { accounts: [], balance: 0, chainId: 0 },
+      mintPrice: 0,
+      maxMintAmount: 1,
+      maxSupply: 0,
+      totalSupply: 0,
+      mintedNFTs: [],
     };
+
+    this.nftMinterABI = NFTMinter.abi;
+    this.nftMinterAddress = process.env.REACT_APP_NFT_MINTER_ADDRESS;
+    this.ipfsGateway = process.env.REACT_APP_IPFS_GATEWAY;
+
     this.contract = null;
+
+    const web3_readonly = new Web3(
+      new Web3.providers.HttpProvider(
+        process.env.REACT_APP_HTTP_PROVIDER_READONLY
+      )
+    );
+    this.contract_readonly = new web3_readonly.eth.Contract(
+      this.nftMinterABI,
+      this.nftMinterAddress
+    );
   }
 
+  
+
   async componentDidMount() {
-    if (window.ethereum) {
-      console.log("component mounted");
-    } else {
-      console.error("Metamask not installed");
-    }
+    console.log("component mounted");
+
+    await this.refreshMintPrice();
+    await this.refreshMaxMintAmount();
+    await this.refreshMaxSupply();
+    await this.refreshTotalSupply();
+    await this.refreshMintedNFTs();
   }
 
   async componentWillUnmount() {
@@ -205,9 +230,10 @@ export default class App extends Component {
       window.ethereum.on("chainChanged", this.refreshPage);
       window.ethereum.on("accountsChanged", this.refreshAccounts);
 
-      var nftMinterABI = NFTMinter.abi;
-      var nftMinterAddress = process.env.REACT_APP_NFT_MINTER_ADDRESS;
-      this.contract = new web3.eth.Contract(nftMinterABI, nftMinterAddress);
+      this.contract = new web3.eth.Contract(
+        this.nftMinterABI,
+        this.nftMinterAddress
+      );
     } else {
       console.log("Please install Metamask");
     }
@@ -246,87 +272,157 @@ export default class App extends Component {
       <div className="App">
         <div className="container">
           <div className="row">
-            <form
-              className="gradient col-lg-5 mt-5"
-              style={{
-                borderRadius: "25px",
-                boxShadow: "1px 1px 15px #000000",
-              }}
-            >
-              <h1 style={{ fontWeight: 900, margin: "5px", color: "#FFFFFF" }}>
-                Mint Portal
-              </h1>
-              <Button
-                onClick={this.connectWallet}
-                variant="dark"
+            <div className="col-md-6 offset-md-3">
+              <form
+                className="gradient my-5 p-2"
                 style={{
-                  fontWeight: "bold",
-                  margin: "5px",
-                  color: "#FFFFFF",
+                  borderRadius: "25px",
+                  boxShadow: "1px 1px 15px #000000",
                 }}
               >
-                Connect To Wallet
-              </Button>
-              {this.state.wallet.accounts.length > 0 && (
-                <div
-                  className="card"
-                  style={{ margin: "5px", boxShadow: "1px 1px 4px #000000" }}
+                <h1 style={{ fontWeight: 900, color: "#FFFFFF" }}>
+                  Mint Portal
+                </h1>
+                <Button
+                  onClick={this.connectWallet}
+                  variant="dark"
+                  style={{
+                    fontWeight: "bold",
+                    margin: "5px",
+                    color: "#FFFFFF",
+                  }}
                 >
-                  <label
-                    style={{ fontWeight: "bold", color: "#000000" }}
-                    htmlFor="floating Input"
+                  Connect To Wallet
+                </Button>
+                {this.state.wallet.accounts.length > 0 && (
+                  <div
+                    className="card"
+                    style={{
+                      margin: "5px",
+                      boxShadow: "1px 1px 4px #000000",
+                    }}
                   >
-                    Your Connected Account: {this.state.wallet.accounts[0]}
-                  </label>
-                  <label
-                    style={{ fontWeight: "bold", color: "#000000" }}
-                    htmlFor="floating Input"
-                  >
-                    Balance: {this.state.wallet.balance} ETH
-                  </label>
-                  <label
-                    style={{ fontWeight: "bold", color: "#000000" }}
-                    htmlFor="floating Input"
-                  >
-                    Blockchian Network ID: {this.state.wallet.chainId}
-                  </label>
-                </div>
-              )}
-              <label
-                style={{
-                  display: "block",
-                  fontWeight: 900,
-                  color: "#FFFFFF",
-                }}
-              >
-                1 NFT minting price: 0.0001 ETH
-              </label>
-              {this.state.wallet.accounts.length > 0 && (
-                <div
-                  className="card"
-                  style={{ margin: "10px", boxShadow: "1px 1px 4px #000000" }}
+                    <label
+                      style={{ fontWeight: "bold", color: "#000000" }}
+                      htmlFor="floating Input"
+                    >
+                      <i style={{ color: "blue" }}>Your Connected Account: </i>
+                      <block>{this.state.wallet.accounts[0]}</block>
+                    </label>
+                    <label
+                      style={{ fontWeight: "bold", color: "#000000" }}
+                      htmlFor="floating Input"
+                    >
+                      <i style={{ color: "blue" }}>Balance: </i>
+                      {this.state.wallet.balance} ETH
+                    </label>
+                    <label
+                      style={{ fontWeight: "bold", color: "#000000" }}
+                      htmlFor="floating Input"
+                    >
+                      <i style={{ color: "blue" }}>Blockchian Network ID: </i>
+                      {this.state.wallet.chainId}
+                    </label>
+                  </div>
+                )}
+                <label
+                  style={{
+                    display: "block",
+                    fontWeight: 900,
+                    color: "#FFFFFF",
+                  }}
                 >
-                  <label style={{ fontWeight: "bold", color: "#000000" }}>
-                    Please select the amount of NFTs to mint
-                  </label>
-                  <input
-                    type="number"
-                    name="amount"
-                    defaultValue="1"
-                    min="1"
-                    max="5"
-                    style={{ fontWeight: "bold", color: "#000000" }}
-                  />
-                  <Button
-                    onClick={this.mint}
-                    variant="dark"
-                    style={{ fontWeight: "bold" }}
+                  Tokens already minted: {this.state.totalSupply} out of{" "}
+                  {this.state.maxSupply}
+                </label>
+                <label
+                  style={{
+                    display: "block",
+                    fontWeight: 900,
+                    color: "#FFFFFF",
+                  }}
+                >
+                  1 NFT minting price: {this.state.mintPrice} ETH
+                </label>
+                {this.state.wallet.accounts.length > 0 && (
+                  <div
+                    className="card"
+                    style={{
+                      margin: "5px",
+                      boxShadow: "1px 1px 4px #000000",
+                    }}
                   >
-                    Mint
-                  </Button>
+                    <label style={{ fontWeight: "bold", color: "#000000" }}>
+                      Please select the amount of NFTs to mint
+                    </label>
+                    <input
+                      type="number"
+                      name="amount"
+                      defaultValue="1"
+                      min="1"
+                      max={this.state.maxMintAmount}
+                      style={{ fontWeight: "bold", color: "#000000" }}
+                    />
+                    <Button
+                      onClick={this.mint}
+                      variant="dark"
+                      style={{ fontWeight: "bold" }}
+                    >
+                      Mint
+                    </Button>
+                  </div>
+                )}
+              </form>
+            </div>
+            {this.state.mintedNFTs.length > 0 && (
+              <div>
+                <h1
+                  class="text-gradient"
+                  style={{ fontWeight: 900, margin: "10px" }}
+                >
+                  Minted NFTs
+                </h1>
+                <div className="row items mt-3">
+                  <div
+                    className="m1-3 mr-3"
+                    style={{
+                      display: "inline-grid",
+                      gridTemplateColumns: "repeat(4, 5fr)",
+                      columnGap: "10px",
+                      rowGap: "10px",
+                    }}
+                  >
+                    {this.state.mintedNFTs.map((mintedNFT, index) => {
+                      return (
+                        <div key={`id_${index}`} className="card nft-gradient">
+                          <div className="image-over">
+                            <img
+                              className="card-img-top"
+                              src={mintedNFT.imageURI}
+                              alt={`nft_${index + 1}`}
+                            />
+                          </div>
+                          <div className="card-caption col-12 p-0">
+                            <div className="card-body">
+                              <h6 className="mb-0" style={{ fontWeight: 900 }}>
+                                {mintedNFT.name}
+                              </h6>
+                              <h6
+                                className="mb-0 mt-2"
+                                style={{ fontWeight: 600 }}
+                              >
+                                <i style={{ color: "blue" }}>Owner Account: </i>
+                                <p>{mintedNFT.owner}</p>
+                              </h6>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-              )}
-            </form>
+              </div>
+            )}
           </div>
         </div>
       </div>
