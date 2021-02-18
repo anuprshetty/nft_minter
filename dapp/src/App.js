@@ -74,6 +74,53 @@ export default class App extends Component {
     );
   }
 
+  refreshMintPrice = async () => {
+    var mintPrice = await this.contract_readonly.methods.cost().call();
+    mintPrice = Web3.utils.fromWei(mintPrice, "ether");
+    console.log("mintPrice: ", mintPrice);
+
+    this.setState((prevState) => ({
+      ...prevState,
+      mintPrice: mintPrice,
+    }));
+  };
+
+  refreshMaxMintAmount = async () => {
+    var maxMintAmount = parseInt(
+      await this.contract_readonly.methods.maxMintAmount().call()
+    );
+    console.log("maxMintAmount: ", maxMintAmount);
+
+    this.setState((prevState) => ({
+      ...prevState,
+      maxMintAmount: maxMintAmount,
+    }));
+  };
+
+  refreshMaxSupply = async () => {
+    var maxSupply = parseInt(
+      await this.contract_readonly.methods.maxSupply().call()
+    );
+    console.log("maxSupply: ", maxSupply);
+
+    this.setState((prevState) => ({
+      ...prevState,
+      maxSupply: maxSupply,
+    }));
+  };
+
+  refreshTotalSupply = async () => {
+    var totalSupply = parseInt(
+      await this.contract_readonly.methods.totalSupply().call()
+    );
+    console.log("totalSupply: ", totalSupply);
+
+    this.setState((prevState) => ({
+      ...prevState,
+      totalSupply: totalSupply,
+    }));
+  };
+
   
 
   async componentDidMount() {
