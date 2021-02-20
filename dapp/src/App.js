@@ -121,7 +121,60 @@ export default class App extends Component {
     }));
   };
 
-  
+  fetchBaseURI = async () => {
+    var baseURI = await this.contract_readonly.methods.baseURI().call();
+    console.log("baseURI: ", baseURI);
+
+    return baseURI;
+  };
+
+  fetchBaseExtension = async () => {
+    var baseExtension = await this.contract_readonly.methods
+      .baseExtension()
+      .call();
+    console.log("baseExtension: ", baseExtension);
+
+    return baseExtension;
+  };
+
+  fetchOwnerOfToken = async (tokenId) => {
+    var owner = await this.contract_readonly.methods.ownerOf(tokenId).call();
+
+    return owner;
+  };
+
+  refreshMintedNFTs = async () => {
+    var mintedNFTs = [];
+    var baseURI = await this.fetchBaseURI();
+    var baseExtension = await this.fetchBaseExtension();
+
+    for (let tokenId = 1; tokenId <= this.state.totalSupply; tokenId++) {
+      var tokenURI =
+        baseURI.replace("ipfs://", "") + String(tokenId) + baseExtension;
+
+      var ipfsJsonURI = this.ipfsGateway + "ipfs/" + tokenURI;
+      var response = await axios.get(ipfsJsonURI);
+      var NFTMetadata = response.data;
+
+      var ipfsImageURI =
+        this.ipfsGateway + "ipfs/" + NFTMetadata.image.replace("ipfs://", "");
+      var owner = await this.fetchOwnerOfToken(tokenId);
+
+      var mintedNFT = {
+        imageURI: ipfsImageURI,
+        name: NFTMetadata.name,
+        owner: owner,
+      };
+      mintedNFTs.push(mintedNFT);
+    }
+
+    this.setState((prevState) => ({
+      ...prevState,
+      mintedNFTs: mintedNFTs,
+    }));
+
+    console.log("mintedNFTs: ", mintedNFTs);
+  };
 
   async componentDidMount() {
     console.log("component mounted");
