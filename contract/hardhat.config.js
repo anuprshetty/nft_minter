@@ -42,3 +42,11 @@ module.exports = {
     verbose: false, // If set to true, will display this config object on start and the full error object
   },
 };
+
+task("accounts", "Prints the list of accounts", async () => {
+  const accounts = await ethers.getSigners();
+
+  for (let i = 0; i < accounts.length; i++) {
+    console.log(`${i + 1}) ${accounts[i].address}`);
+  }
+});
