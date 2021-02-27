@@ -1,0 +1,5 @@
+{
+  "image_name": "tom_and_jerry.png",
+  "num_copies": 5,
+  "ipfs_node_rpc_api": "/ip4/127.0.0.1/tcp/5001"
+}
