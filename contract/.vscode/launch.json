@@ -1,0 +1,43 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+
+  // See https://code.visualstudio.com/docs/editor/variables-reference
+  // for available variables which can be used in tasks.json, launch.json and settings.json files.
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "debug_mocha_tests",
+      "type": "node",
+      "request": "launch",
+      "program": "node_modules/mocha/bin/_mocha",
+      "args": [
+        "test/**/*.js",
+        // "--grep", // --> uncomment this to debug a particular test_case.
+        // "should withdraw contract balance to contract owner address", // --> particular "test_case_name" to be debugged.
+        "--ui",
+        "bdd" // Test interface (e.g., "bdd", "tdd")
+      ],
+      "internalConsoleOptions": "openOnSessionStart",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "contract->hardhat_script",
+      "request": "launch",
+      "type": "node",
+      "program": "node_modules/.bin/hardhat",
+      "args": ["run", "scripts/${input:hardhat_script}"]
+    }
+  ],
+  "inputs": [
+    {
+      "id": "hardhat_script",
+      "type": "command",
+      "command": "shellCommand.execute",
+      "args": {
+        "command": "ls ${workplaceFolder}contract/scripts/"
+      }
+    }
+  ]
+}
