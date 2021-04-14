@@ -12,20 +12,26 @@ module.exports = {
     hardhat: {
       initialBaseFeePerGas: 0,
     },
+    localhost: {
+      url: "http://127.0.0.1:8545/",
+    },
+    remote: {
+      url: "https://hardhat-network.onrender.com",
+    },
     ganache: {
-      url: "http://127.0.0.1:7545", // Update the URL to match your Ganache network configuration
+      url: "http://127.0.0.1:7545/", // Update the URL to match your Ganache network configuration
       accounts: {
         mnemonic:
           "unaware noodle timber pepper hard hold fatigue thumb curve prosper good journey", // Update with the Ganache mnemonic phrase
       },
     },
   },
-  defaultNetwork: "hardhat",
+  defaultNetwork: "hardhat", // hardhat framework uses defaultNetwork to run testcases.
   ethernal: {
     // email: process.env.ETHERNAL_EMAIL,
     // password: process.env.ETHERNAL_PASSWORD,
     apiToken: process.env.ETHERNAL_API_TOKEN,
-    disableSync: false, // If set to true, plugin will not sync blocks & txs
+    disableSync: true, // If set to true, plugin will not sync blocks & txs
     disableTrace: false, // If set to true, plugin won't trace transaction
     workspace: process.env.ETHERNAL_WORKSPACE, // Set the workspace to use, will default to the default workspace (latest one used in the dashboard). It is also possible to set it through the ETHERNAL_WORKSPACE env variable
     /*
@@ -43,10 +49,3 @@ module.exports = {
   },
 };
 
-task("accounts", "Prints the list of accounts", async () => {
-  const accounts = await ethers.getSigners();
-
-  for (let i = 0; i < accounts.length; i++) {
-    console.log(`${i + 1}) ${accounts[i].address}`);
-  }
-});
