@@ -1,0 +1,69 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+
+  // See https://code.visualstudio.com/docs/editor/variables-reference
+  // for available variables which can be used in tasks.json, launch.json and settings.json files.
+
+  "version": "2.0.0",
+  "type": "shell",
+  "presentation": {
+    "reveal": "always",
+    "panel": "dedicated", // options: 'dedicated', 'shared'
+    "showReuseMessage": false // Controls whether to show the "Terminal will be reused by tasks, press any key to close it" message.
+  },
+
+  "tasks": [
+    {
+      "label": "contract->prerequisites->npm_install",
+      "command": "npm install"
+    },
+    {
+      "label": "contract->prerequisites->npm_cleanup",
+      "command": "rm -rf node_modules && rm -f package-lock.json"
+    },
+    {
+      "label": "contract->prerequisites->npm_reset",
+      "dependsOrder": "sequence", // by default, "parallel"
+      "dependsOn": [
+        "contract->prerequisites->npm_cleanup",
+        "contract->prerequisites->npm_install"
+      ]
+    },
+    {
+      "label": "contract->1.compile",
+      "command": "npx hardhat compile"
+    },
+    {
+      "label": "contract->2.test",
+      "command": "npx hardhat --network hardhat test"
+    },
+    {
+      "label": "contract->3.coverage",
+      "command": "npx hardhat --network hardhat coverage ; npx hardhat --network hardhat coverage --abi ; npx hardhat --network hardhat coverage --matrix ; open -a 'Google Chrome' coverage/index.html",
+      "detail": "solidity-coverage plugin for hardhat"
+    },
+    {
+      "label": "contract->4.deploy",
+      "command": "npx hardhat --network ${input:hardhat_network} run scripts/deploy.js"
+    },
+    {
+      "label": "contract->5.clean",
+      "command": "npx hardhat clean && rm -rf artifacts/ cache/ coverage/ coverage.json humanReadableAbis.json mochaOutput.json testMatrix.json"
+    },
+    {
+      "label": "contract->6.debug_console",
+      "command": "npx hardhat console"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "hardhat_network",
+      "type": "command",
+      "command": "shellCommand.execute",
+      "args": {
+        "command": "cd ${workplaceFolder}contract && npx hardhat networks"
+      }
+    }
+  ]
+}
