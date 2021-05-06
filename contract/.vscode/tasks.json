@@ -36,7 +36,7 @@
     },
     {
       "label": "contract->2.test",
-      "command": "npx hardhat --network hardhat test"
+      "command": "REPORT_GAS=true npx hardhat --network hardhat test"
     },
     {
       "label": "contract->3.coverage",
