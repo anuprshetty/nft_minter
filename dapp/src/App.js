@@ -3,7 +3,7 @@ import "./App.css";
 import Button from "react-bootstrap/Button";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Web3 from "web3";
-import NFTMinter from "./NFTMinter.json";
+import NFTMinter from "./contracts_info/NFTMinter.json";
 import React, { Component } from "react";
 import { formatBalance, formatChainAsNum } from "./utils";
 import axios from "axios";
@@ -57,20 +57,18 @@ export default class App extends Component {
       mintedNFTs: [],
     };
 
-    this.nftMinterABI = NFTMinter.abi;
-    this.nftMinterAddress = process.env.REACT_APP_NFT_MINTER_ADDRESS;
     this.ipfsGateway = process.env.REACT_APP_IPFS_GATEWAY;
 
     this.contract = null;
 
     const web3_readonly = new Web3(
       new Web3.providers.HttpProvider(
-        process.env.REACT_APP_HTTP_PROVIDER_READONLY
+        process.env.REACT_APP_EVMCHAIN_HTTP_PROVIDER_URL_READONLY
       )
     );
     this.contract_readonly = new web3_readonly.eth.Contract(
-      this.nftMinterABI,
-      this.nftMinterAddress
+      NFTMinter.abi,
+      NFTMinter.contractAddress
     );
   }
 
@@ -331,8 +329,8 @@ export default class App extends Component {
       window.ethereum.on("accountsChanged", this.refreshAccounts);
 
       this.contract = new web3.eth.Contract(
-        this.nftMinterABI,
-        this.nftMinterAddress
+        NFTMinter.abi,
+        NFTMinter.contractAddress
       );
     } else {
       console.log("Please install Metamask");
