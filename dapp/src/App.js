@@ -75,7 +75,6 @@ export default class App extends Component {
   refreshMintPrice = async () => {
     var mintPrice = await this.contract_readonly.methods.cost().call();
     mintPrice = Web3.utils.fromWei(mintPrice, "ether");
-    console.log("mintPrice: ", mintPrice);
 
     this.setState((prevState) => ({
       ...prevState,
@@ -87,7 +86,6 @@ export default class App extends Component {
     var maxMintAmount = parseInt(
       await this.contract_readonly.methods.maxMintAmount().call()
     );
-    console.log("maxMintAmount: ", maxMintAmount);
 
     this.setState((prevState) => ({
       ...prevState,
@@ -99,7 +97,6 @@ export default class App extends Component {
     var maxSupply = parseInt(
       await this.contract_readonly.methods.maxSupply().call()
     );
-    console.log("maxSupply: ", maxSupply);
 
     this.setState((prevState) => ({
       ...prevState,
@@ -111,7 +108,6 @@ export default class App extends Component {
     var totalSupply = parseInt(
       await this.contract_readonly.methods.totalSupply().call()
     );
-    console.log("totalSupply: ", totalSupply);
 
     this.setState((prevState) => ({
       ...prevState,
@@ -121,7 +117,6 @@ export default class App extends Component {
 
   fetchBaseURI = async () => {
     var baseURI = await this.contract_readonly.methods.baseURI().call();
-    console.log("baseURI: ", baseURI);
 
     return baseURI;
   };
@@ -130,7 +125,6 @@ export default class App extends Component {
     var baseExtension = await this.contract_readonly.methods
       .baseExtension()
       .call();
-    console.log("baseExtension: ", baseExtension);
 
     return baseExtension;
   };
@@ -170,8 +164,6 @@ export default class App extends Component {
       ...prevState,
       mintedNFTs: mintedNFTs,
     }));
-
-    console.log("mintedNFTs: ", mintedNFTs);
   };
 
   async componentDidMount() {
@@ -199,7 +191,7 @@ export default class App extends Component {
 
       return chainId;
     } catch (err) {
-      console.error("Error connecting to Metamask: ", err);
+      console.error("Error connecting to wallet: ", err);
       return 0;
     }
   };
@@ -210,7 +202,6 @@ export default class App extends Component {
 
   refreshChain = async () => {
     var chainId = await this.ethChainId();
-    console.log("chainId: ", chainId);
 
     this.setState((prevState) => ({
       ...prevState,
@@ -235,7 +226,7 @@ export default class App extends Component {
 
       return accounts;
     } catch (err) {
-      console.error("Error connecting to Metamask: ", err);
+      console.error("Error connecting to wallet: ", err);
       return [];
     }
   };
@@ -257,8 +248,6 @@ export default class App extends Component {
     if (accounts.length > 0) {
       balance = await this.ethGetBalance(accounts[0]);
     }
-    console.log("accounts: ", accounts);
-    console.log("balance: ", balance);
 
     this.setState((prevState) => ({
       ...prevState,
@@ -333,7 +322,7 @@ export default class App extends Component {
         NFTMinter.contractAddress
       );
     } else {
-      console.log("Please install Metamask");
+      console.log("Please install a wallet");
     }
   };
 
@@ -352,7 +341,7 @@ export default class App extends Component {
         .mint(account, mintAmount)
         .send({ from: account, value: String(totalPrice) });
     } else {
-      console.error("Metamask not installed");
+      console.error("Wallet not installed");
     }
   };
 
