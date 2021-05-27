@@ -6,7 +6,7 @@ ARG PROJECT_ROOT_FOLDER=dapp
 WORKDIR /developer/projects/$PROJECT_ROOT_FOLDER
 RUN echo "Current working directory: $(pwd)"
 
-COPY .. .
+COPY . .
 
 RUN npm install
 

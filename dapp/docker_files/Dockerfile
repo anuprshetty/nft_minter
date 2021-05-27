@@ -12,7 +12,7 @@ RUN echo "Current working directory: $(pwd)"
 ENV REACT_APP_IPFS_GATEWAY=$REACT_APP_IPFS_GATEWAY
 ENV REACT_APP_EVMCHAIN_HTTP_PROVIDER_URL_READONLY=$REACT_APP_EVMCHAIN_HTTP_PROVIDER_URL_READONLY
 
-COPY .. .
+COPY . .
 
 RUN npm install
 
@@ -29,7 +29,7 @@ RUN echo "Current working directory: $(pwd)"
 
 COPY --from=builder /developer/projects/dapp/build ./build
 
-COPY ../nginx.conf ./nginx.conf
+COPY ./nginx.conf ./nginx.conf
 
 RUN mv /etc/nginx/nginx.conf /etc/nginx/nginx_original.conf
 RUN cp nginx.conf /etc/nginx/nginx.conf
