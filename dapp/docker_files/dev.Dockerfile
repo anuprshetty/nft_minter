@@ -6,9 +6,10 @@ ARG PROJECT_ROOT_FOLDER=dapp
 WORKDIR /developer/projects/$PROJECT_ROOT_FOLDER
 RUN echo "Current working directory: $(pwd)"
 
-COPY . .
-
+COPY ./package.json ./package-lock.json ./
 RUN npm install
+
+COPY ./ ./
 
 EXPOSE 3000
 
