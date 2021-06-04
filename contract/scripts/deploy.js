@@ -9,6 +9,8 @@ const fs = require("fs");
 const path = require("path");
 
 async function main() {
+  await hre.run("compile");
+
   const contracts_deploy_info = [
     {
       name: "NFTMinter",
