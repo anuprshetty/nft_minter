@@ -1,0 +1,41 @@
+name: End to end deployment workflow
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  REGISTRY: ghcr.io
+  USER_NAME: ${{ github.actor }}
+  IMAGE_NAME: nft-minter-image
+  HARDHAT_NETWORK: remote
+  ETHERNAL_WORKSPACE: remote_net_explorer
+  REACT_APP_IPFS_GATEWAY: http://127.0.0.1:4325/
+  REACT_APP_EVMCHAIN_HTTP_PROVIDER_URL_READONLY: https://hardhat-network.onrender.com
+
+jobs:
+  e2e-deployment-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log in to the Container registry
+        run: |
+          docker login --username ${{ env.USER_NAME }} --password ${{ secrets.GH_REGISTRY_TOKEN }} ${{ env.REGISTRY }}
+
+      - name: Build and push Docker image
+        run: |
+          docker build \
+          . \
+          --file docker_files/e2e.Dockerfile \
+          --tag ${{ env.REGISTRY }}/${{ env.USER_NAME }}/${{ env.IMAGE_NAME }}:latest \
+          --build-arg HARDHAT_NETWORK=$ {{ env.HARDHAT_NETWORK }} \
+          --build-arg ETHERNAL_API_TOKEN=$ {{ secrets.ETHERNAL_API_TOKEN }} \
+          --build-arg ETHERNAL_WORKSPACE=$ {{ env.ETHERNAL_WORKSPACE }} \
+          --build-arg REACT_APP_IPFS_GATEWAY=$ {{ env.REACT_APP_IPFS_GATEWAY }} \
+          --build-arg REACT_APP_EVMCHAIN_HTTP_PROVIDER_URL_READONLY=$ {{ env.REACT_APP_EVMCHAIN_HTTP_PROVIDER_URL_READONLY }}
+
+          docker push ${{ env.REGISTRY }}/${{ env.USER_NAME }}/${{ env.IMAGE_NAME }}:latest
