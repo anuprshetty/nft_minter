@@ -45,7 +45,7 @@
     },
     {
       "label": "contract->4.deploy",
-      "command": "npx hardhat --network ${input:hardhat_network} run scripts/deploy.js"
+      "command": "DEPLOY_MODE='DeploySetup' npx hardhat --network ${input:hardhat_network} run scripts/deploy.js"
     },
     {
       "label": "contract->5.clean",
