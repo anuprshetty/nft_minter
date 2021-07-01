@@ -32,7 +32,10 @@
         "${input:hardhat_network}",
         "run",
         "scripts/${input:hardhat_script}"
-      ]
+      ],
+      "env": {
+        "DEPLOY_MODE": "${input:deploy_mode}"
+      }
     }
   ],
   "inputs": [
@@ -51,6 +54,13 @@
       "args": {
         "command": "cd ${workplaceFolder}contract && npx hardhat networks"
       }
+    },
+    {
+      "id": "deploy_mode",
+      "type": "pickString",
+      "description": "Select <deploy_mode>",
+      "options": ["DeploySetup", "DeployE2E", "SetupE2E"],
+      "default": "DeploySetup"
     }
   ]
 }
