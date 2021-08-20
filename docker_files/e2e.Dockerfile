@@ -18,7 +18,9 @@ RUN npm install
 
 COPY ./contract/ ./
 
-RUN npx hardhat --network $HARDHAT_NETWORK run ./scripts/deployE2E.js | tee deployE2E.log
+RUN command=`DEPLOY_MODE='DeployE2E' npx hardhat --network $HARDHAT_NETWORK run ./scripts/deploy.js` \
+    && command_output=$command 2>&1 \
+    && echo "$command_output" | tee DeployE2E.log
 
 
 FROM node:18-alpine as dapp_builder
@@ -53,7 +55,7 @@ WORKDIR /developer/projects/$PROJECT_ROOT_FOLDER
 RUN echo "Current working directory: $(pwd)"
 
 COPY --from=dapp_builder /developer/projects/dapp/build/ ./build/
-COPY --from=contract_deployer /developer/projects/contract/deployE2E.log ./deployE2E.log
+COPY --from=contract_deployer /developer/projects/contract/DeployE2E.log ./DeployE2E.log
 
 COPY ./dapp/nginx.conf ./nginx.conf
 
@@ -65,3 +67,6 @@ EXPOSE 80
 
 # Start Nginx daemon service in the background
 CMD nginx -g 'daemon off;'
+
+# Link the github package to the github repository in github
+LABEL org.opencontainers.image.source=https://github.com/anuprshetty/nft_minter
