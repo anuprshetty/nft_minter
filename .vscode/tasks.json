@@ -28,7 +28,7 @@
     },
     {
       "label": "nft_minter->e2e->local->4.contracts_setup",
-      "command": "npx hardhat --network localhost run scripts/setupE2E.js",
+      "command": "DEPLOY_MODE='SetupE2E' npx hardhat --network localhost run scripts/deploy.js",
       "options": {
         "cwd": "./contract"
       }
@@ -51,14 +51,34 @@
     },
     {
       "label": "nft_minter->e2e->remote->4.contracts_setup",
-      "command": "npx hardhat --network remote run scripts/setupE2E.js",
+      "command": "DEPLOY_MODE='SetupE2E' npx hardhat --network remote run scripts/deploy.js",
       "options": {
         "cwd": "./contract"
       }
     },
     {
       "label": "nft_minter->e2e->remote->5.launch_dapp",
-      "command": "open -a 'Google Chrome' 'https://nft-minter.onrender.com'"
+      "command": "open -a 'Google Chrome' 'http://127.0.0.1:8080/'"
+    },
+    {
+      "label": "nft_minter->github_workflows->1.act_list",
+      "command": "act --list"
+    },
+    {
+      "label": "nft_minter->github_workflows->2.act_graph",
+      "command": "act --graph"
+    },
+    {
+      "label": "nft_minter->github_workflows->3.act_dryrun",
+      "command": "act --dryrun"
+    },
+    {
+      "label": "nft_minter->github_workflows->4.act_run",
+      "command": "act --rm --actor anuprshetty --secret-file ./.github/.secrets"
+    },
+    {
+      "label": "nft_minter->github_workflows->5.act_clean",
+      "command": "act --dryrun"
     }
   ]
 }
