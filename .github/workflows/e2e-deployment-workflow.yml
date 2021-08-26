@@ -15,6 +15,7 @@ env:
   ETHERNAL_WORKSPACE: remote_net_explorer
   REACT_APP_IPFS_GATEWAY: http://127.0.0.1:4325/
   REACT_APP_EVMCHAIN_HTTP_PROVIDER_URL_READONLY: https://hardhat-network.onrender.com
+  RENDER_PLATFORM_DEPLOY_HOOK: ${{ secrets.RENDER_PLATFORM_DEPLOY_HOOK }}
 
 jobs:
   e2e-deployment-job:
@@ -41,3 +42,8 @@ jobs:
           .
 
           docker push ${{ env.REGISTRY }}/${{ env.USER_NAME }}/${{ env.IMAGE_NAME }}:latest
+
+      - name: Deploy dapp
+        run: |
+          deployment_trigger_api_response=$(curl -s "${{ env.RENDER_PLATFORM_DEPLOY_HOOK }}") && \
+          echo "Deployment trigger API response: $deployment_trigger_api_response"
