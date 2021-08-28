@@ -159,8 +159,27 @@ function setup_dapp_contracts_info() {
 }
 const dapp_contracts_info_folder_path = setup_dapp_contracts_info();
 
+async function display_hardhat_network_info() {
+  let provider = hre.ethers.provider;
+
+  const hardhat_network_info = {
+    name: provider._networkName,
+    url:
+      "url" in hre.config.networks[provider._networkName]
+        ? hre.config.networks[provider._networkName].url
+        : "",
+    chainId: parseInt((await provider.getNetwork()).chainId),
+  };
+
+  console.log("\n---------------- Hardhat Network Info ----------------");
+  console.log(`${JSON.stringify(hardhat_network_info, null, 2)}`);
+  console.log("------------------------------------------------------\n");
+}
+
 async function main() {
   await hre.run("compile");
+
+  await display_hardhat_network_info();
 
   console.log("-----------------------------------------------------");
   console.log("------------- Contracts Deployment Info -------------");
