@@ -53,7 +53,7 @@
     },
     {
       "label": "contract->debug_on->console",
-      "command": "npx hardhat console"
+      "command": "npx hardhat --network ${input:hardhat_network} console"
     },
     {
       "label": "contract->debug_on->remix_ide->1.remixd",
