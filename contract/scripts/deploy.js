@@ -236,7 +236,13 @@ class DeploySetup extends BaseDeploy {
   }
 }
 
+class DeployE2E extends BaseDeploy {
+  async deployE2E() {
+    await this.deploy();
+  }
 
+  
+}
 
 
 
