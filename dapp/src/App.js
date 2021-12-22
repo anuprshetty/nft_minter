@@ -68,7 +68,7 @@ export default class App extends Component {
     );
     this.contract_readonly = new web3_readonly.eth.Contract(
       contractsInfo.NFTMinter.abi,
-      contractsInfo.NFTMinter.contractAddress
+      contractsInfo.NFTMinter.contractInstances[0]["address"]
     );
   }
 
@@ -151,6 +151,8 @@ export default class App extends Component {
         var ipfsImageURI =
           this.ipfsGateway + "ipfs/" + NFTMetadata.image.replace("ipfs://", "");
       } catch (error) {
+        NFTMetadata = {};
+        ipfsImageURI = "";
         console.error("IPFS error: ", error);
       }
       var owner = await this.fetchOwnerOfToken(tokenId);
@@ -159,7 +161,7 @@ export default class App extends Component {
         name:
           NFTMetadata instanceof Object && "name" in NFTMetadata
             ? NFTMetadata.name
-            : "",
+            : "NFT info not found",
         imageURI: ipfsImageURI ? ipfsImageURI : "",
         owner: owner,
       };
@@ -325,7 +327,7 @@ export default class App extends Component {
 
       this.contract = new web3.eth.Contract(
         contractsInfo.NFTMinter.abi,
-        contractsInfo.NFTMinter.contractAddress
+        contractsInfo.NFTMinter.contractInstances[0]["address"]
       );
     } else {
       console.log("Please install a wallet");
@@ -374,7 +376,7 @@ export default class App extends Component {
                 }}
               >
                 <h1 style={{ fontWeight: 900, color: "#FFFFFF" }}>
-                  Mint Portal
+                  NFT Mint Portal
                 </h1>
                 <Button
                   onClick={this.connectWallet}
