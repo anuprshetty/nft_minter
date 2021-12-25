@@ -4,6 +4,10 @@ A dapp for minting NFTs.
 
 ![nft_minter_dapp](media/nft_minter_dapp.png)
 
+## Smart Contracts
+
+- NFTMinter (tom_and_jerry)
+
 ## Tools and Technologies Used
 
 - nft:
