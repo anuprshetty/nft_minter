@@ -1,5 +1,5 @@
 {
-  "name": "nft_viewer",
+  "name": "nft_minter",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
