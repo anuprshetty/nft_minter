@@ -1,8 +1,11 @@
 import os
 from shutil import copyfile
 
+
+# NFT images generation
+
 file_path = os.path.join(os.path.dirname(__file__), "tom_and_jerry.png")
-folder_path = os.path.join(os.path.dirname(__file__), "images")
+folder_path = os.path.join(os.path.dirname(__file__), "tom_jerry_images")
 num_copies = 50
 
 if not os.path.exists(folder_path):
