@@ -45,4 +45,96 @@ describe("NFTMinter", function () {
       expect(await nftMinter.connect(owner).paused()).to.be.false;
     });
   });
+
+  describe("mint", function () {
+    describe("negative scenarios", function () {
+      it("should revert when paused", async function () {
+        await nftMinter.connect(owner).pause(true);
+        expect(await nftMinter.connect(owner).paused()).to.equal(true);
+
+        await expect(
+          nftMinter.connect(user1).mint(user1.address, 1)
+        ).to.be.revertedWith("minting is paused");
+      });
+
+      it("should revert when mintAmount is 0", async function () {
+        await expect(
+          nftMinter.connect(user1).mint(user1.address, 0)
+        ).to.be.revertedWith("mint amount is less than 1");
+      });
+
+      it("should revert when mintAmount > maxMintAmount", async function () {
+        await expect(
+          nftMinter.connect(user1).mint(user1.address, 6)
+        ).to.be.revertedWith("max mint amount exceeded");
+      });
+
+      it("should revert when (totalSupply + mintAmount) > maxSupply", async function () {
+        let newMaxMintAmount = 250;
+        await nftMinter.connect(owner).setmaxMintAmount(newMaxMintAmount);
+        expect(await nftMinter.connect(owner).maxMintAmount()).to.equal(
+          newMaxMintAmount
+        );
+
+        for (let i = 0; i < 3; i++) {
+          await nftMinter.connect(owner).mint(owner.address, 250);
+        }
+        await nftMinter.connect(owner).mint(owner.address, 249);
+
+        let totalSupply = await nftMinter.connect(owner).totalSupply();
+        expect(totalSupply).to.equal(999);
+
+        await expect(
+          nftMinter.connect(owner).mint(owner.address, 2)
+        ).to.be.revertedWith("max supply exceeded");
+
+        await nftMinter.connect(owner).mint(owner.address, 1);
+
+        let maxSupply = await nftMinter.connect(owner).maxSupply();
+        totalSupply = await nftMinter.connect(owner).totalSupply();
+        expect(totalSupply).to.equal(maxSupply);
+
+        await expect(
+          nftMinter.connect(owner).mint(owner.address, 1)
+        ).to.be.revertedWith("max supply exceeded");
+
+        maxSupply = await nftMinter.connect(owner).maxSupply();
+        totalSupply = await nftMinter.connect(owner).totalSupply();
+        expect(totalSupply).to.equal(maxSupply);
+      });
+
+      itParam(
+        "should revert when user(except owner) doesn't send 0.0001 ether for each token to be minted: sent ${value} ether for 2 mintAmount",
+        ["0", "0.0001", "0.0003"],
+        async function (value) {
+          await expect(
+            nftMinter.connect(user1).mint(user1.address, 2, {
+              value: ethers.utils.parseEther(value),
+            })
+          ).to.be.revertedWith(
+            "Need to send 0.0001 ether for each token to be minted"
+          );
+        }
+      );
+    });
+
+    describe("minting", function () {
+      it("should mint and transfer the specified amount of tokens to the given address", async function () {
+        let mintAmount = 3;
+        await nftMinter.connect(user1).mint(user2.address, mintAmount, {
+          value: ethers.utils.parseEther("0.0003"),
+        });
+
+        const user2_balance = await nftMinter
+          .connect(user2)
+          .balanceOf(user2.address);
+        const user2_tokens = await nftMinter
+          .connect(user2)
+          .walletOfOwner(user2.address);
+
+        expect(user2_balance).to.equal(mintAmount);
+        expect(user2_tokens.length).to.equal(mintAmount);
+      });
+    });
+  });
 });
