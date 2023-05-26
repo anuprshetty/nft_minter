@@ -269,4 +269,169 @@ describe("NFTMinter", function () {
       expect(await nftMinter.connect(owner).paused()).to.be.equal(false);
     });
   });
+
+  describe("withdraw", function () {
+    it("should withdraw contract balance to contract owner address", async function () {
+      let contractBalanceBefore = parseFloat(
+        ethers.utils.formatEther(
+          await ethers.provider.getBalance(nftMinter.address)
+        )
+      );
+      expect(contractBalanceBefore).to.equal(0);
+
+      let newMaxMintAmount = 250;
+      await nftMinter.connect(owner).setmaxMintAmount(newMaxMintAmount);
+      expect(await nftMinter.connect(owner).maxMintAmount()).to.equal(
+        newMaxMintAmount
+      );
+
+      let ownerBalanceBefore = parseFloat(
+        ethers.utils.formatEther(
+          await ethers.provider.getBalance(owner.address)
+        )
+      );
+
+      let mintAmount = 250;
+      let mintCost = 0.0001;
+      for (let i = 0; i < 2; i++) {
+        await nftMinter.connect(user1).mint(user1.address, mintAmount, {
+          value: ethers.utils.parseEther((mintAmount * mintCost).toString()),
+        });
+      }
+
+      contractBalanceBefore = parseFloat(
+        ethers.utils.formatEther(
+          await ethers.provider.getBalance(nftMinter.address)
+        )
+      );
+      expect(contractBalanceBefore).to.equal(
+        parseFloat(2 * mintAmount * mintCost)
+      );
+
+      tx = await nftMinter.connect(owner).withdraw();
+      txReceipt = await tx.wait();
+
+      txCost = parseFloat(
+        ethers.utils.formatEther(
+          txReceipt.gasUsed * txReceipt.effectiveGasPrice
+        )
+      );
+
+      contractBalanceAfter = parseFloat(
+        ethers.utils.formatEther(
+          await ethers.provider.getBalance(nftMinter.address)
+        )
+      );
+      expect(contractBalanceAfter).to.equal(0);
+
+      ownerBalanceAfter = parseFloat(
+        ethers.utils.formatEther(
+          await ethers.provider.getBalance(owner.address)
+        )
+      );
+      expect(ownerBalanceAfter).to.equal(
+        parseFloat(ownerBalanceBefore - txCost + contractBalanceBefore)
+      );
+    });
+
+    it("multiple withdraw() function calls should maintain the consistency in the contract state and owner account", async function () {
+      let contractBalanceBefore = parseFloat(
+        ethers.utils.formatEther(
+          await ethers.provider.getBalance(nftMinter.address)
+        )
+      );
+      expect(contractBalanceBefore).to.equal(0);
+
+      let ownerBalanceBefore = parseFloat(
+        ethers.utils.formatEther(
+          await ethers.provider.getBalance(owner.address)
+        )
+      );
+
+      let tx = await nftMinter.connect(owner).withdraw();
+      let txReceipt = await tx.wait();
+
+      let txCost = parseFloat(
+        ethers.utils.formatEther(
+          txReceipt.gasUsed * txReceipt.effectiveGasPrice
+        )
+      );
+
+      let contractBalanceAfter = parseFloat(
+        ethers.utils.formatEther(
+          await ethers.provider.getBalance(nftMinter.address)
+        )
+      );
+      expect(contractBalanceAfter).to.equal(0);
+
+      let ownerBalanceAfter = parseFloat(
+        ethers.utils.formatEther(
+          await ethers.provider.getBalance(owner.address)
+        )
+      );
+      expect(ownerBalanceAfter).to.equal(
+        parseFloat(ownerBalanceBefore - txCost + contractBalanceBefore)
+      );
+
+      let newMaxMintAmount = 250;
+      await nftMinter.connect(owner).setmaxMintAmount(newMaxMintAmount);
+      expect(await nftMinter.connect(owner).maxMintAmount()).to.equal(
+        newMaxMintAmount
+      );
+
+      ownerBalanceBefore = parseFloat(
+        ethers.utils.formatEther(
+          await ethers.provider.getBalance(owner.address)
+        )
+      );
+
+      let mintAmount = 250;
+      let mintCost = 0.0001;
+      for (let i = 0; i < 2; i++) {
+        await nftMinter.connect(user1).mint(user1.address, mintAmount, {
+          value: ethers.utils.parseEther((mintAmount * mintCost).toString()),
+        });
+      }
+
+      contractBalanceBefore = parseFloat(
+        ethers.utils.formatEther(
+          await ethers.provider.getBalance(nftMinter.address)
+        )
+      );
+      expect(contractBalanceBefore).to.equal(
+        parseFloat(2 * mintAmount * mintCost)
+      );
+
+      // multiple withdraw() function calls should maintain the consistency in the contract state and owner account.
+      let totalTxCost = 0;
+      for (let i = 0; i < 3; i++) {
+        tx = await nftMinter.connect(owner).withdraw();
+        txReceipt = await tx.wait();
+
+        txCost = parseFloat(
+          ethers.utils.formatEther(
+            txReceipt.gasUsed * txReceipt.effectiveGasPrice
+          )
+        );
+
+        totalTxCost += txCost;
+      }
+
+      contractBalanceAfter = parseFloat(
+        ethers.utils.formatEther(
+          await ethers.provider.getBalance(nftMinter.address)
+        )
+      );
+      expect(contractBalanceAfter).to.equal(0);
+
+      ownerBalanceAfter = parseFloat(
+        ethers.utils.formatEther(
+          await ethers.provider.getBalance(owner.address)
+        )
+      );
+      expect(ownerBalanceAfter).to.equal(
+        parseFloat(ownerBalanceBefore - totalTxCost + contractBalanceBefore)
+      );
+    });
+  });
 });
