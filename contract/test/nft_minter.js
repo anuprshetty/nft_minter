@@ -201,4 +201,25 @@ describe("NFTMinter", function () {
       );
     });
   });
+
+  describe("onlyOwner modifier", function () {
+    it("functions with onlyOwner modifier should revert if it's not called by the owner", async function () {
+      const errorMessage = "Ownable: caller is not the owner";
+      await expect(
+        nftMinter.connect(user1).setmaxMintAmount(10)
+      ).to.be.revertedWith(errorMessage);
+      await expect(nftMinter.connect(user1).setBaseURI("")).to.be.revertedWith(
+        errorMessage
+      );
+      await expect(
+        nftMinter.connect(user1).setBaseExtension("")
+      ).to.be.revertedWith(errorMessage);
+      await expect(nftMinter.connect(user1).pause(true)).to.be.revertedWith(
+        errorMessage
+      );
+      await expect(nftMinter.connect(user1).withdraw()).to.be.revertedWith(
+        errorMessage
+      );
+    });
+  });
 });
