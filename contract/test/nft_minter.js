@@ -257,4 +257,16 @@ describe("NFTMinter", function () {
       );
     });
   });
+
+  describe("pause", function () {
+    it("should pause and unpause the minting process", async function () {
+      expect(await nftMinter.connect(owner).paused()).to.be.equal(false);
+
+      await nftMinter.connect(owner).pause(true);
+      expect(await nftMinter.connect(owner).paused()).to.be.equal(true);
+
+      await nftMinter.connect(owner).pause(false);
+      expect(await nftMinter.connect(owner).paused()).to.be.equal(false);
+    });
+  });
 });
