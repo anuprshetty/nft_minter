@@ -239,4 +239,13 @@ describe("NFTMinter", function () {
       expect(await nftMinter.connect(owner).maxMintAmount()).to.be.equal(20);
     });
   });
+
+  describe("setBaseURI", function () {
+    it("should set the correct baseURI", async function () {
+      await nftMinter.connect(owner).setBaseURI("www.some.thing/url/");
+      expect(await nftMinter.connect(owner).baseURI()).to.be.equal(
+        "www.some.thing/url/"
+      );
+    });
+  });
 });
