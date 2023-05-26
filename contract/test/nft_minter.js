@@ -222,4 +222,21 @@ describe("NFTMinter", function () {
       );
     });
   });
+
+  describe("setmaxMintAmount", function () {
+    itParam(
+      "should revert when maxMintAmount is invalid: maxMintAmount = ${value}",
+      [0, 1001],
+      async function (value) {
+        await expect(
+          nftMinter.connect(owner).setmaxMintAmount(value)
+        ).to.be.revertedWith("Invalid maxMintAmount");
+      }
+    );
+
+    it("should set the correct maxMintAmount", async function () {
+      await nftMinter.connect(owner).setmaxMintAmount(20);
+      expect(await nftMinter.connect(owner).maxMintAmount()).to.be.equal(20);
+    });
+  });
 });
