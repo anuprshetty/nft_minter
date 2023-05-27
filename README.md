@@ -15,6 +15,9 @@
 - npm i web3
 - npm i ethers
 - npm install react-bootstrap bootstrap@5.1.3
+- npm run start
+- npm run build
+- npm run test
 
 ### nft_minter/contract
 
