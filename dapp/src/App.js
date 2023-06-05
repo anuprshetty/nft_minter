@@ -44,6 +44,15 @@ export default class App extends Component {
   - this.state --> for state object
   */
 
+  constructor() {
+    super();
+
+    this.state = {
+      wallet: { accounts: [], balance: 0, chainId: 0 },
+    };
+    this.contract = null;
+  }
+
   
 
   render() {
