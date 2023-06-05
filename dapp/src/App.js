@@ -213,7 +213,24 @@ export default class App extends Component {
     }
   };
 
+  mint = async () => {
+    if (window.ethereum) {
+      var mintAmount = Number(document.querySelector("[name=amount]").value);
 
+      // The call() method is used for reading data from the contract without making any modifications to the contract state. It returns the function's return value or an error if the function reverts.
+      var mintPrice = Number(await this.contract.methods.cost().call());
+
+      var totalPrice = mintPrice * mintAmount;
+      var account = this.state.wallet.accounts[0];
+
+      // The send() method is used for executing contract functions that modify the contract state. It returns a transaction hash that can be used to track the status of the transaction.
+      this.contract.methods
+        .mint(account, mintAmount)
+        .send({ from: account, value: String(totalPrice) });
+    } else {
+      console.error("Metamask not installed");
+    }
+  };
 
   render() {
     /*
