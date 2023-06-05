@@ -66,6 +66,38 @@ export default class App extends Component {
     window.ethereum?.removeListener("accountsChanged", this.refreshAccounts);
   }
 
+  ethChainId = async () => {
+    try {
+      var chainId = formatChainAsNum(
+        await window.ethereum.request({
+          method: "eth_chainId",
+        })
+      );
+
+      return chainId;
+    } catch (err) {
+      console.error("Error connecting to Metamask: ", err);
+      return 0;
+    }
+  };
+
+  refreshPage = () => {
+    window.location.reload(true);
+  };
+
+  refreshChain = async () => {
+    var chainId = await this.ethChainId();
+    console.log("chainId: ", chainId);
+
+    this.setState((prevState) => ({
+      ...prevState,
+      wallet: {
+        ...prevState.wallet,
+        chainId: chainId,
+      },
+    }));
+  };
+
   
 
   render() {
