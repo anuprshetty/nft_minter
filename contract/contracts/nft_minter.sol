@@ -1357,7 +1357,7 @@ pragma solidity ^0.8.0;
 contract NFTMinter is ERC721Enumerable, Ownable {
     using Strings for uint256;
     string public baseURI =
-        "ipfs://QmfWXnEAKP1i95wwiNvPbbaFP3igEBMuzRLByMFGHfkM5m/";
+        "ipfs://QmPkWsajvyiyxrpo9ZP3k8xXpsDF1BteioshjeLmsj9er5/";
     string public baseExtension = ".json";
     uint256 public cost = 0.0001 ether;
     uint256 public maxSupply = 1000;
