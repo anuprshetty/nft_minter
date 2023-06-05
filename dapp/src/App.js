@@ -98,7 +98,56 @@ export default class App extends Component {
     }));
   };
 
-  
+  ethRequestAccounts = async () => {
+    try {
+      /*
+      - When a user connects their wallet (e.g., Metamask) to a web application, the wallet's user interface already displays the connected accounts. However, the web application itself does not have automatic access to the account information. So the web application needs explicit permission from the user to access the accounts programmatically.
+      - So await window.ethereum.send('eth_requestAccounts'); line is used to send a request to the Ethereum provider (e.g., Metamask extension) to prompt the user for permission to access that user's Ethereum accounts connected to the wallet by the web application programmatically. This step is necessary to ensure that the web application has explicit user consent before accessing account-related information.
+      - Once the user grants permission, the await window.ethereum.request({method: "eth_requestAccounts",}) method retrieves the list of connected accounts available in the connected wallet.
+      - NOTE: Here accounts list contains only one account address. That will be the account selected by the user in the Metamask UI.
+      */
+      var accounts = await window.ethereum.request({
+        method: "eth_requestAccounts",
+      });
+
+      return accounts;
+    } catch (err) {
+      console.error("Error connecting to Metamask: ", err);
+      return [];
+    }
+  };
+
+  ethGetBalance = async (account) => {
+    var balance = formatBalance(
+      await window.ethereum.request({
+        method: "eth_getBalance",
+        params: [account, "latest"], // balance of the account at the latest block
+      })
+    );
+
+    return balance;
+  };
+
+  refreshAccounts = async () => {
+    var accounts = await this.ethRequestAccounts();
+    var balance = 0;
+    if (accounts.length > 0) {
+      balance = await this.ethGetBalance(accounts[0]);
+    }
+    console.log("accounts: ", accounts);
+    console.log("balance: ", balance);
+
+    this.setState((prevState) => ({
+      ...prevState,
+      wallet: {
+        ...prevState.wallet,
+        accounts: accounts,
+        balance: balance,
+      },
+    }));
+  };
+
+
 
   render() {
     /*
