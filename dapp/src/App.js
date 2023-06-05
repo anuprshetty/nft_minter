@@ -45,4 +45,105 @@ export default class App extends Component {
   */
 
   
+
+  render() {
+    /*
+    --> JSX - JavaScript XML
+    -->  It is an extension to JavaScript syntax that allows you to write HTML-like code within JavaScript.
+    --> JSX is primarily associated with the React library and is commonly used to define the structure and appearance of components in React applications.
+    --> However, it is important to note that JSX is not actual HTML. Instead, it is a syntactic sugar that gets transformed into regular JavaScript function calls during the compilation process.
+    --> Ex: const element = <h1>Hello, JSX!</h1>;
+        After compilation,
+        const element = React.createElement('h1', null, 'Hello, JSX!');
+    */
+    return (
+      <div className="App">
+        <div className="container">
+          <div className="row">
+            <form
+              className="gradient col-lg-5 mt-5"
+              style={{
+                borderRadius: "25px",
+                boxShadow: "1px 1px 15px #000000",
+              }}
+            >
+              <h1 style={{ fontWeight: 900, margin: "5px", color: "#FFFFFF" }}>
+                Mint Portal
+              </h1>
+              <Button
+                onClick={this.connectWallet}
+                variant="dark"
+                style={{
+                  fontWeight: "bold",
+                  margin: "5px",
+                  color: "#FFFFFF",
+                }}
+              >
+                Connect To Wallet
+              </Button>
+              {this.state.wallet.accounts.length > 0 && (
+                <div
+                  className="card"
+                  style={{ margin: "5px", boxShadow: "1px 1px 4px #000000" }}
+                >
+                  <label
+                    style={{ fontWeight: "bold", color: "#000000" }}
+                    htmlFor="floating Input"
+                  >
+                    Your Connected Account: {this.state.wallet.accounts[0]}
+                  </label>
+                  <label
+                    style={{ fontWeight: "bold", color: "#000000" }}
+                    htmlFor="floating Input"
+                  >
+                    Balance: {this.state.wallet.balance} ETH
+                  </label>
+                  <label
+                    style={{ fontWeight: "bold", color: "#000000" }}
+                    htmlFor="floating Input"
+                  >
+                    Blockchian Network ID: {this.state.wallet.chainId}
+                  </label>
+                </div>
+              )}
+              <label
+                style={{
+                  display: "block",
+                  fontWeight: 900,
+                  color: "#FFFFFF",
+                }}
+              >
+                1 NFT minting price: 0.0001 ETH
+              </label>
+              {this.state.wallet.accounts.length > 0 && (
+                <div
+                  className="card"
+                  style={{ margin: "10px", boxShadow: "1px 1px 4px #000000" }}
+                >
+                  <label style={{ fontWeight: "bold", color: "#000000" }}>
+                    Please select the amount of NFTs to mint
+                  </label>
+                  <input
+                    type="number"
+                    name="amount"
+                    defaultValue="1"
+                    min="1"
+                    max="5"
+                    style={{ fontWeight: "bold", color: "#000000" }}
+                  />
+                  <Button
+                    onClick={this.mint}
+                    variant="dark"
+                    style={{ fontWeight: "bold" }}
+                  >
+                    Mint
+                  </Button>
+                </div>
+              )}
+            </form>
+          </div>
+        </div>
+      </div>
+    );
+  }
 }
