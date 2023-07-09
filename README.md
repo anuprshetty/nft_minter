@@ -13,9 +13,10 @@
 
 - brew install node@16
 - node -v
-- npx create-react-app nft_viewer
+- cd nft_minter
+- npx create-react-app dapp
+- cd dapp
 - npm i web3
-- npm i ethers
 - npm install react-bootstrap bootstrap@5.1.3
 - npm install --> install packages specified in package.json
 - npm run start
