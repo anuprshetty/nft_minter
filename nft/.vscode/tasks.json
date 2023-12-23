@@ -41,6 +41,10 @@
     {
       "label": "nft->generate_nft",
       "command": ". .venv/bin/activate && python nft_generator.py"
+    },
+    {
+      "label": "nft->cleanup_outputs",
+      "command": "rm -rf outputs"
     }
   ]
 }
