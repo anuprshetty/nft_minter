@@ -9,18 +9,17 @@ const hre = require("hardhat");
 async function main() {
   const NFTMinter = await hre.ethers.getContractFactory("NFTMinter");
   const nftMinter = await NFTMinter.deploy();
-
-  await nftMinter.deployed();
+  await nftMinter.waitForDeployment();
 
   hre.ethernalUploadAst = true;
   await hre.ethernal.push({
     name: "NFTMinter",
-    address: nftMinter.address,
+    address: nftMinter.target,
   });
 
   console.log(
     "\nNFTMinter contract is deployed at the address: ",
-    nftMinter.address
+    nftMinter.target
   );
 }
 
