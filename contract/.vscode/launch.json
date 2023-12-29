@@ -27,7 +27,12 @@
       "request": "launch",
       "type": "node",
       "program": "node_modules/.bin/hardhat",
-      "args": ["run", "scripts/${input:hardhat_script}"]
+      "args": [
+        "--network",
+        "${input:hardhat_network}",
+        "run",
+        "scripts/${input:hardhat_script}"
+      ]
     }
   ],
   "inputs": [
@@ -37,6 +42,14 @@
       "command": "shellCommand.execute",
       "args": {
         "command": "ls ${workplaceFolder}contract/scripts/"
+      }
+    },
+    {
+      "id": "hardhat_network",
+      "type": "command",
+      "command": "shellCommand.execute",
+      "args": {
+        "command": "cd ${workplaceFolder}contract && npx hardhat networks"
       }
     }
   ]
