@@ -5,7 +5,7 @@
   "mochaExplorer.exit": true,
   "mochaExplorer.parallel": false,
   "mochaExplorer.files": "test/**/*.js",
-  "mochaExplorer.cwd": "contract",
+  "mochaExplorer.cwd": ".",
   "mochaExplorer.debuggerPort": 9229,
   "mochaExplorer.autoload": true,
   "testExplorer.codeLens": true,

@@ -1,5 +1,8 @@
+// mocha --> a javascript test framework.
+// chai --> an assertion library.
+
 const { expect } = require("chai");
-const { ethers } = require("hardhat");
+const { ethers, run } = require("hardhat");
 const { itParam } = require("mocha-param");
 
 describe("NFTMinter", function () {
@@ -10,6 +13,7 @@ describe("NFTMinter", function () {
 
   before(async function () {
     // console.log("Testing started – before all tests");
+    await run("compile");
   });
   after(async function () {
     // console.log("Testing finished – after all tests");
@@ -21,7 +25,7 @@ describe("NFTMinter", function () {
     [owner, user1, user2] = await ethers.getSigners();
     const NFTMinter = await ethers.getContractFactory("NFTMinter"); // this method looks for a contract artifact file in the artifacts/ directory of your Hardhat project. If it finds the file, it returns a contract factory object that you can use to deploy and interact with the contract.
     nftMinter = await NFTMinter.connect(owner).deploy(); // initiates for deploying the smart contract to this local testnet
-    await nftMinter.deployed(); // waits for the contract deployment transaction to be confirmed and for the contract to be fully deployed on the local testnet
+    await nftMinter.waitForDeployment(); // waits for the contract deployment transaction to be confirmed and for the contract to be fully deployed on the local testnet
   });
   afterEach(async function () {
     // console.log("After a test – exit a test");
@@ -33,12 +37,10 @@ describe("NFTMinter", function () {
         "TomAndJerry NFT Collection"
       );
       expect(await nftMinter.connect(owner).symbol()).to.equal("TNJ");
-      expect(await nftMinter.connect(owner).baseURI()).to.equal(
-        "ipfs://QmfWXnEAKP1i95wwiNvPbbaFP3igEBMuzRLByMFGHfkM5m/"
-      );
+      expect(await nftMinter.connect(owner).baseURI()).to.equal("");
       expect(await nftMinter.connect(owner).baseExtension()).to.equal(".json");
       expect(await nftMinter.connect(owner).cost()).to.equal(
-        ethers.utils.parseEther("0.0001")
+        ethers.parseEther("0.0001")
       );
       expect(await nftMinter.connect(owner).maxSupply()).to.equal(1000);
       expect(await nftMinter.connect(owner).maxMintAmount()).to.equal(5);
@@ -109,7 +111,7 @@ describe("NFTMinter", function () {
         async function (value) {
           await expect(
             nftMinter.connect(user1).mint(user1.address, 2, {
-              value: ethers.utils.parseEther(value),
+              value: ethers.parseEther(value),
             })
           ).to.be.revertedWith(
             "Need to send 0.0001 ether for each token to be minted"
@@ -122,7 +124,7 @@ describe("NFTMinter", function () {
       it("should mint and transfer the specified amount of tokens to the given address", async function () {
         let mintAmount = 3;
         await nftMinter.connect(user1).mint(user2.address, mintAmount, {
-          value: ethers.utils.parseEther("0.0003"),
+          value: ethers.parseEther("0.0003"),
         });
 
         const user2_balance = await nftMinter
@@ -146,10 +148,10 @@ describe("NFTMinter", function () {
       expect(user2_balance).to.equal(0);
 
       await nftMinter.connect(user1).mint(user2.address, 1, {
-        value: ethers.utils.parseEther("0.0001"),
+        value: ethers.parseEther("0.0001"),
       });
       await nftMinter.connect(user1).mint(user2.address, 2, {
-        value: ethers.utils.parseEther("0.0002"),
+        value: ethers.parseEther("0.0002"),
       });
 
       user2_wallet = await nftMinter
@@ -177,7 +179,7 @@ describe("NFTMinter", function () {
       expect(await nftMinter.connect(owner).baseURI()).to.equal("");
 
       await nftMinter.connect(user1).mint(user1.address, 1, {
-        value: ethers.utils.parseEther("0.0001"),
+        value: ethers.parseEther("0.0001"),
       });
       expect(await nftMinter.connect(user1).totalSupply()).to.equal(1);
       expect(await nftMinter.connect(user1).balanceOf(user1.address)).to.equal(
@@ -189,15 +191,16 @@ describe("NFTMinter", function () {
 
     it("should return correct tokenURI for the given existing tokenId", async function () {
       await nftMinter.connect(user1).mint(user1.address, 1, {
-        value: ethers.utils.parseEther("0.0001"),
+        value: ethers.parseEther("0.0001"),
       });
       expect(await nftMinter.connect(user1).totalSupply()).to.equal(1);
       expect(await nftMinter.connect(user1).balanceOf(user1.address)).to.equal(
         1
       );
 
+      await nftMinter.connect(owner).setBaseURI("<nft_metadata_folder_cid>");
       expect(await nftMinter.connect(user1).tokenURI(1)).to.be.equal(
-        "ipfs://QmfWXnEAKP1i95wwiNvPbbaFP3igEBMuzRLByMFGHfkM5m/1.json"
+        "ipfs://<nft_metadata_folder_cid>/1.json"
       );
     });
   });
@@ -242,9 +245,9 @@ describe("NFTMinter", function () {
 
   describe("setBaseURI", function () {
     it("should set the correct baseURI", async function () {
-      await nftMinter.connect(owner).setBaseURI("www.some.thing/url/");
+      await nftMinter.connect(owner).setBaseURI("<nft_metadata_folder_cid>");
       expect(await nftMinter.connect(owner).baseURI()).to.be.equal(
-        "www.some.thing/url/"
+        "ipfs://<nft_metadata_folder_cid>/"
       );
     });
   });
@@ -273,9 +276,7 @@ describe("NFTMinter", function () {
   describe("withdraw", function () {
     it("should withdraw contract balance to contract owner address", async function () {
       let contractBalanceBefore = parseFloat(
-        ethers.utils.formatEther(
-          await ethers.provider.getBalance(nftMinter.address)
-        )
+        ethers.formatEther(await ethers.provider.getBalance(nftMinter.target))
       );
       expect(contractBalanceBefore).to.equal(0);
 
@@ -286,23 +287,19 @@ describe("NFTMinter", function () {
       );
 
       let ownerBalanceBefore = parseFloat(
-        ethers.utils.formatEther(
-          await ethers.provider.getBalance(owner.address)
-        )
+        ethers.formatEther(await ethers.provider.getBalance(owner.address))
       );
 
       let mintAmount = 250;
       let mintCost = 0.0001;
       for (let i = 0; i < 2; i++) {
         await nftMinter.connect(user1).mint(user1.address, mintAmount, {
-          value: ethers.utils.parseEther((mintAmount * mintCost).toString()),
+          value: ethers.parseEther((mintAmount * mintCost).toString()),
         });
       }
 
       contractBalanceBefore = parseFloat(
-        ethers.utils.formatEther(
-          await ethers.provider.getBalance(nftMinter.address)
-        )
+        ethers.formatEther(await ethers.provider.getBalance(nftMinter.target))
       );
       expect(contractBalanceBefore).to.equal(
         parseFloat(2 * mintAmount * mintCost)
@@ -312,22 +309,16 @@ describe("NFTMinter", function () {
       txReceipt = await tx.wait();
 
       txCost = parseFloat(
-        ethers.utils.formatEther(
-          txReceipt.gasUsed * txReceipt.effectiveGasPrice
-        )
+        ethers.formatEther(txReceipt.gasUsed * txReceipt.gasPrice)
       );
 
       contractBalanceAfter = parseFloat(
-        ethers.utils.formatEther(
-          await ethers.provider.getBalance(nftMinter.address)
-        )
+        ethers.formatEther(await ethers.provider.getBalance(nftMinter.target))
       );
       expect(contractBalanceAfter).to.equal(0);
 
       ownerBalanceAfter = parseFloat(
-        ethers.utils.formatEther(
-          await ethers.provider.getBalance(owner.address)
-        )
+        ethers.formatEther(await ethers.provider.getBalance(owner.address))
       );
       expect(ownerBalanceAfter).to.equal(
         parseFloat(ownerBalanceBefore - txCost + contractBalanceBefore)
@@ -336,38 +327,28 @@ describe("NFTMinter", function () {
 
     it("multiple withdraw() function calls should maintain the consistency in the contract state and owner account", async function () {
       let contractBalanceBefore = parseFloat(
-        ethers.utils.formatEther(
-          await ethers.provider.getBalance(nftMinter.address)
-        )
+        ethers.formatEther(await ethers.provider.getBalance(nftMinter.target))
       );
       expect(contractBalanceBefore).to.equal(0);
 
       let ownerBalanceBefore = parseFloat(
-        ethers.utils.formatEther(
-          await ethers.provider.getBalance(owner.address)
-        )
+        ethers.formatEther(await ethers.provider.getBalance(owner.address))
       );
 
       let tx = await nftMinter.connect(owner).withdraw();
       let txReceipt = await tx.wait();
 
       let txCost = parseFloat(
-        ethers.utils.formatEther(
-          txReceipt.gasUsed * txReceipt.effectiveGasPrice
-        )
+        ethers.formatEther(txReceipt.gasUsed * txReceipt.gasPrice)
       );
 
       let contractBalanceAfter = parseFloat(
-        ethers.utils.formatEther(
-          await ethers.provider.getBalance(nftMinter.address)
-        )
+        ethers.formatEther(await ethers.provider.getBalance(nftMinter.target))
       );
       expect(contractBalanceAfter).to.equal(0);
 
       let ownerBalanceAfter = parseFloat(
-        ethers.utils.formatEther(
-          await ethers.provider.getBalance(owner.address)
-        )
+        ethers.formatEther(await ethers.provider.getBalance(owner.address))
       );
       expect(ownerBalanceAfter).to.equal(
         parseFloat(ownerBalanceBefore - txCost + contractBalanceBefore)
@@ -380,23 +361,19 @@ describe("NFTMinter", function () {
       );
 
       ownerBalanceBefore = parseFloat(
-        ethers.utils.formatEther(
-          await ethers.provider.getBalance(owner.address)
-        )
+        ethers.formatEther(await ethers.provider.getBalance(owner.address))
       );
 
       let mintAmount = 250;
       let mintCost = 0.0001;
       for (let i = 0; i < 2; i++) {
         await nftMinter.connect(user1).mint(user1.address, mintAmount, {
-          value: ethers.utils.parseEther((mintAmount * mintCost).toString()),
+          value: ethers.parseEther((mintAmount * mintCost).toString()),
         });
       }
 
       contractBalanceBefore = parseFloat(
-        ethers.utils.formatEther(
-          await ethers.provider.getBalance(nftMinter.address)
-        )
+        ethers.formatEther(await ethers.provider.getBalance(nftMinter.target))
       );
       expect(contractBalanceBefore).to.equal(
         parseFloat(2 * mintAmount * mintCost)
@@ -409,25 +386,19 @@ describe("NFTMinter", function () {
         txReceipt = await tx.wait();
 
         txCost = parseFloat(
-          ethers.utils.formatEther(
-            txReceipt.gasUsed * txReceipt.effectiveGasPrice
-          )
+          ethers.formatEther(txReceipt.gasUsed * txReceipt.gasPrice)
         );
 
         totalTxCost += txCost;
       }
 
       contractBalanceAfter = parseFloat(
-        ethers.utils.formatEther(
-          await ethers.provider.getBalance(nftMinter.address)
-        )
+        ethers.formatEther(await ethers.provider.getBalance(nftMinter.target))
       );
       expect(contractBalanceAfter).to.equal(0);
 
       ownerBalanceAfter = parseFloat(
-        ethers.utils.formatEther(
-          await ethers.provider.getBalance(owner.address)
-        )
+        ethers.formatEther(await ethers.provider.getBalance(owner.address))
       );
       expect(ownerBalanceAfter).to.equal(
         parseFloat(ownerBalanceBefore - totalTxCost + contractBalanceBefore)
