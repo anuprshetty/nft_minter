@@ -15,6 +15,9 @@ module.exports = {
     localhost: {
       url: "http://127.0.0.1:8545/",
     },
+    dockerhost: {
+      url: "http://host.docker.internal:8545/",
+    },
     remote: {
       url: "https://hardhat-network.onrender.com",
     },
