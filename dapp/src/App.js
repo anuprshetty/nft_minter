@@ -3,7 +3,7 @@ import "./App.css";
 import Button from "react-bootstrap/Button";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Web3 from "web3";
-import NFTMinter from "./contracts_info/NFTMinter.json";
+import contractsInfo from "./contractsInfo";
 import React, { Component } from "react";
 import { formatBalance, formatChainAsNum } from "./utils";
 import axios from "axios";
@@ -67,8 +67,8 @@ export default class App extends Component {
       )
     );
     this.contract_readonly = new web3_readonly.eth.Contract(
-      NFTMinter.abi,
-      NFTMinter.contractAddress
+      contractsInfo.NFTMinter.abi,
+      contractsInfo.NFTMinter.contractAddress
     );
   }
 
@@ -168,7 +168,7 @@ export default class App extends Component {
 
   async componentDidMount() {
     console.log("component mounted");
-
+    console.log("contractsInfo: ", contractsInfo);
     await this.refreshMintPrice();
     await this.refreshMaxMintAmount();
     await this.refreshMaxSupply();
@@ -318,8 +318,8 @@ export default class App extends Component {
       window.ethereum.on("accountsChanged", this.refreshAccounts);
 
       this.contract = new web3.eth.Contract(
-        NFTMinter.abi,
-        NFTMinter.contractAddress
+        contractsInfo.NFTMinter.abi,
+        contractsInfo.NFTMinter.contractAddress
       );
     } else {
       console.log("Please install a wallet");
