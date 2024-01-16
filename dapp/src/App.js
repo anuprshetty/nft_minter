@@ -145,16 +145,22 @@ export default class App extends Component {
         baseURI.replace("ipfs://", "") + String(tokenId) + baseExtension;
 
       var ipfsJsonURI = this.ipfsGateway + "ipfs/" + tokenURI;
-      var response = await axios.get(ipfsJsonURI);
-      var NFTMetadata = response.data;
-
-      var ipfsImageURI =
-        this.ipfsGateway + "ipfs/" + NFTMetadata.image.replace("ipfs://", "");
+      try {
+        var response = await axios.get(ipfsJsonURI);
+        var NFTMetadata = response.data;
+        var ipfsImageURI =
+          this.ipfsGateway + "ipfs/" + NFTMetadata.image.replace("ipfs://", "");
+      } catch (error) {
+        console.error("IPFS error: ", error);
+      }
       var owner = await this.fetchOwnerOfToken(tokenId);
 
       var mintedNFT = {
-        imageURI: ipfsImageURI,
-        name: NFTMetadata.name,
+        name:
+          NFTMetadata instanceof Object && "name" in NFTMetadata
+            ? NFTMetadata.name
+            : "",
+        imageURI: ipfsImageURI ? ipfsImageURI : "",
         owner: owner,
       };
       mintedNFTs.push(mintedNFT);
