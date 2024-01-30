@@ -166,7 +166,15 @@ class NFTMinter extends BaseContract {
   }
 }
 
+class BaseDeploy {
+  constructor() {
+    this.nft_collections = [];
+  }
 
+
+
+
+}
 
 
 
