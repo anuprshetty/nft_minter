@@ -15,12 +15,12 @@ def get_json_content(json_file_path):
     return json_content
 
 
-def get_input_nft_info():
-    file_path = os.path.join(os.path.dirname(__file__), "inputs/input_nft_info.json")
+def get_input_nfts_info():
+    file_path = os.path.join(os.path.dirname(__file__), "inputs/input_nfts_info.json")
 
-    input_nft_info = get_json_content(file_path)
+    input_nfts_info = get_json_content(file_path)
 
-    return input_nft_info
+    return input_nfts_info
 
 
 def ipfs_push_with_ipfshttpclient(ipfs_node_rpc_api, files, file_extension):
@@ -71,44 +71,6 @@ def ipfs_push_with_ipfs_cli(ipfs_node_rpc_api, folder_path):
     return files_folder_cid
 
 
-def nft_image_generator(input_nft_info):
-    image_path = os.path.join(
-        os.path.dirname(__file__), "inputs/images/", input_nft_info["image_name"]
-    )
-    image_extension = os.path.splitext(input_nft_info["image_name"])[1][1:]
-    num_copies = input_nft_info["num_copies"]
-    ipfs_node_rpc_api = input_nft_info["ipfs_node_rpc_api"]
-
-    temp_folder_path = os.path.join(
-        os.path.dirname(__file__), "outputs/temp_nft_images/"
-    )
-
-    if not os.path.exists(temp_folder_path):
-        os.makedirs(temp_folder_path)
-
-    with Image.open(image_path) as base_image:
-        nft_images = []
-        for image_id in range(1, num_copies + 1):
-            nft_image = io.BytesIO()
-            base_image.save(nft_image, format=image_extension)
-            nft_image.seek(0)
-            nft_images.append(nft_image.getvalue())
-
-            temp_file_path = os.path.join(
-                temp_folder_path, str(image_id) + "." + image_extension
-            )
-
-            with open(temp_file_path, "wb") as temp_file:
-                nft_image.seek(0)
-                temp_file.write(nft_image.getvalue())
-
-    # nft_image_folder_cid = ipfs_push_with_ipfshttpclient(
-    #     ipfs_node_rpc_api, nft_images, image_extension
-    # )
-
-    nft_image_folder_cid = ipfs_push_with_ipfs_cli(ipfs_node_rpc_api, temp_folder_path)
-
-    return nft_image_folder_cid
 
 
 def get_nft_metadata(base_metadata, base_metadata_placeholders):
@@ -136,80 +98,7 @@ def get_nft_metadata(base_metadata, base_metadata_placeholders):
     return replace_placeholders(temp_base_metadata, base_metadata_placeholders)
 
 
-def nft_metadata_generator(input_nft_info, nft_image_folder_cid):
-    image_extension = os.path.splitext(input_nft_info["image_name"])[1][1:]
-    metadata_path = os.path.join(os.path.dirname(__file__), "inputs/nft_metadata.json")
-    metadata_extension = "json"
-    num_copies = input_nft_info["num_copies"]
-    ipfs_node_rpc_api = input_nft_info["ipfs_node_rpc_api"]
-
-    temp_folder_path = os.path.join(
-        os.path.dirname(__file__), "outputs/temp_nft_metadata/"
-    )
-
-    if not os.path.exists(temp_folder_path):
-        os.makedirs(temp_folder_path)
-
-    base_metadata = get_json_content(metadata_path)
-
-    nft_metadata_list = []
-    for image_id in range(1, num_copies + 1):
-        base_metadata_placeholders = {
-            "nft_image_folder_cid": nft_image_folder_cid,
-            "image_id": image_id,
-            "image_extension": image_extension,
-        }
-
-        nft_metadata = get_nft_metadata(base_metadata, base_metadata_placeholders)
-
-        nft_metadata_list.append(json.dumps(nft_metadata))
-
-        temp_file_path = os.path.join(
-            temp_folder_path, str(image_id) + "." + metadata_extension
-        )
-        with open(temp_file_path, "w", encoding="utf-8") as temp_file:
-            json.dump(nft_metadata, temp_file, indent=2)
-
-    # nft_metadata_folder_cid = ipfs_push_with_ipfshttpclient(
-    #     ipfs_node_rpc_api, nft_metadata_list, metadata_extension
-    # )
-
-    nft_metadata_folder_cid = ipfs_push_with_ipfs_cli(
-        ipfs_node_rpc_api, temp_folder_path
-    )
-
-    return nft_metadata_folder_cid
 
 
-def generate_output_nft_info(
-    input_nft_info, nft_image_folder_cid, nft_metadata_folder_cid
-):
-    file_path = os.path.join(os.path.dirname(__file__), "outputs/output_nft_info.json")
-    folder_path = os.path.dirname(file_path)
-
-    if not os.path.exists(folder_path):
-        os.makedirs(folder_path)
-
-    output_nft_info = {
-        "image_name": input_nft_info["image_name"],
-        "num_copies": input_nft_info["num_copies"],
-        "ipfs_node_rpc_api": input_nft_info["ipfs_node_rpc_api"],
-        "nft_image_folder_cid": nft_image_folder_cid,
-        "nft_metadata_folder_cid": nft_metadata_folder_cid,
-    }
-
-    with open(file_path, "w") as file:
-        json.dump(output_nft_info, file, indent=2)
 
 
-if __name__ == "__main__":
-    input_nft_info = get_input_nft_info()
-    nft_image_folder_cid = nft_image_generator(input_nft_info)
-    nft_metadata_folder_cid = nft_metadata_generator(
-        input_nft_info, nft_image_folder_cid
-    )
-    generate_output_nft_info(
-        input_nft_info, nft_image_folder_cid, nft_metadata_folder_cid
-    )
-
-    print("SUCCESS: NFT generation ... DONE")
