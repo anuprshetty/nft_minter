@@ -311,6 +311,54 @@ class SetupE2E extends BaseDeploy {
   }
 }
 
+async function main() {
+  const DEPLOY_MODES = ["DeploySetup", "DeployE2E", "SetupE2E"];
+  const DEPLOY_MODE = process.env.DEPLOY_MODE;
+  if (!DEPLOY_MODE || !DEPLOY_MODES.includes(DEPLOY_MODE)) {
+    throw new Error("Invalid DEPLOY_MODE");
+  }
 
+  await hre.run("compile");
 
+  await Utils.display_hardhat_network_info();
 
+  console.log("-----------------------------------------------------");
+  console.log("------------- Contracts Deployment Info -------------");
+  console.log("-----------------------------------------------------");
+
+  if (DEPLOY_MODE === "DeploySetup") {
+    const deploy_setup = new DeploySetup();
+    await deploy_setup.deploySetup();
+  } else if (DEPLOY_MODE === "DeployE2E") {
+    const deploy_e2e = new DeployE2E();
+    await deploy_e2e.deployE2E();
+  } else if (DEPLOY_MODE === "SetupE2E") {
+    const setup_e2e = new SetupE2E();
+    await setup_e2e.setupE2E();
+  } else {
+    throw new Error("Invalid DEPLOY_MODE");
+  }
+
+  console.log(`\n${JSON.stringify(Utils.contracts_setup_outputs, null, 2)}`);
+  console.log("-----------------------------------------------------");
+
+  console.log("\nSUCCESS: contracts deployment ... DONE");
+}
+
+// We recommend this pattern to be able to use async/await everywhere
+// and properly handle errors.
+main().catch((error) => {
+  console.log(
+    "\n--------------------------- ERROR --------------------------\n"
+  );
+  console.error(error);
+  console.log(
+    "\n------------------------------------------------------------\n"
+  );
+  console.log(
+    "ERROR NOTE:\n \
+      1) Make sure hardhat network is running.\n \
+      2) Make sure you have properly updated contracts_setup_inputs.json file."
+  );
+  process.exitCode = 1;
+});
