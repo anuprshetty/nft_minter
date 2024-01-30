@@ -260,7 +260,18 @@ class DeployE2E extends BaseDeploy {
   }
 }
 
+class SetupE2E extends BaseDeploy {
+  async setupE2E() {
+    await this.setup();
+  }
 
+  async setup() {
+    await this.setupPrerequisites();
+    await this.setBaseURI();
+  }
+
+
+}
 
 
 
