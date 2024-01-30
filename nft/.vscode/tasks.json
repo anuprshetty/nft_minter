@@ -40,11 +40,13 @@
     },
     {
       "label": "nft->generate_nft",
-      "command": ". .venv/bin/activate && python nft_generator.py"
+      "command": ". .venv/bin/activate && python nft_generator.py",
+      "dependsOrder": "sequence",
+      "dependsOn": ["nft->cleanup_outputs"]
     },
     {
       "label": "nft->cleanup_outputs",
-      "command": "rm -rf outputs"
+      "command": "rm -rf outputs/"
     }
   ]
 }
