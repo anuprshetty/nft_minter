@@ -216,7 +216,18 @@ class BaseDeploy {
   }
 }
 
+class DeploySetup extends BaseDeploy {
+  async deploySetup() {
+    await this.deploy();
+    await this.setup();
+  }
 
+  
+
+  async setup() {
+    await this.setBaseURI();
+  }
+}
 
 
 
