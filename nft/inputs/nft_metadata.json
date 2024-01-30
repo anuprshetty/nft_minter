@@ -1,6 +1,6 @@
 {
-  "name": "#{image_id} - Tom and Jerry NFT Image",
-  "description": "Tom and Jerry NFT Collection",
+  "name": "#{image_id} - {name} NFT Image",
+  "description": "{name} NFT Collection",
   "image": "ipfs://{nft_image_folder_cid}/{image_id}.{image_extension}",
   "edition": "1",
   "attributes": [
@@ -9,11 +9,11 @@
       "value": "white"
     },
     {
-      "trait_type": "Tom Color",
+      "trait_type": "Foreground",
       "value": "Gray"
     },
     {
-      "trait_type": "Jerry Color",
+      "trait_type": "Shadow",
       "value": "Brown"
     }
   ]
