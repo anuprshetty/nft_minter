@@ -14,7 +14,15 @@ contract NFTMinter is ERC721Enumerable, Ownable {
     uint256 public maxMintAmount = 5;
     bool public paused = false;
 
-    constructor() ERC721("TomAndJerry NFT Collection", "TNJ") {}
+    constructor(
+        string memory _name,
+        string memory _symbol
+    )
+        ERC721(
+            bytes(_name).length > 0 ? _name : "NFT Collection Null",
+            bytes(_symbol).length > 0 ? _symbol : "COL-NUL"
+        )
+    {}
 
     function mint(address _to, uint256 _mintAmount) public payable {
         uint256 supply = totalSupply();
