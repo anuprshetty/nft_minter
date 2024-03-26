@@ -24,7 +24,10 @@ describe("NFTMinter", function () {
     // JavaScript destructuring for arrays and objects.
     [owner, user1, user2] = await ethers.getSigners();
     const NFTMinter = await ethers.getContractFactory("NFTMinter"); // this method looks for a contract artifact file in the artifacts/ directory of your Hardhat project. If it finds the file, it returns a contract factory object that you can use to deploy and interact with the contract.
-    nftMinter = await NFTMinter.connect(owner).deploy(); // initiates for deploying the smart contract to this local testnet
+    nftMinter = await NFTMinter.connect(owner).deploy(
+      "NFT Collection TomAndJerry",
+      "COL-TNJ"
+    ); // initiates for deploying the smart contract to this local testnet
     await nftMinter.waitForDeployment(); // waits for the contract deployment transaction to be confirmed and for the contract to be fully deployed on the local testnet
   });
   afterEach(async function () {
@@ -34,9 +37,9 @@ describe("NFTMinter", function () {
   describe("deployment initial state", function () {
     it("should set the state variables to correct values after contract deployment", async function () {
       expect(await nftMinter.connect(owner).name()).to.equal(
-        "TomAndJerry NFT Collection"
+        "NFT Collection TomAndJerry"
       );
-      expect(await nftMinter.connect(owner).symbol()).to.equal("TNJ");
+      expect(await nftMinter.connect(owner).symbol()).to.equal("COL-TNJ");
       expect(await nftMinter.connect(owner).baseURI()).to.equal("");
       expect(await nftMinter.connect(owner).baseExtension()).to.equal(".json");
       expect(await nftMinter.connect(owner).cost()).to.equal(
