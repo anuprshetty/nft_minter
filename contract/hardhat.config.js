@@ -23,6 +23,7 @@ module.exports = {
     },
     eth_local_net: {
       url: "http://127.0.0.1:<PORT>/",
+      signer_private_key: process.env.ETH_LOCAL_NET_SIGNER_PRIVATE_KEY,
     },
     ganache: {
       url: "http://127.0.0.1:7545/", // Update the URL to match your Ganache network configuration
