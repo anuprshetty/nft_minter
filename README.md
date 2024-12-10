@@ -14,7 +14,7 @@ A dapp for minting NFTs.
   - IPFS, NFTs, Python
 - contract:
   - Smart contracts (ERC721Enumerable, Ownable)
-  - Hardhat, Solidity, OpenZeppelin, Remix IDE, Blockchain, JavaScript, Mocha Testcases, Solidity code coverage
+  - Hardhat, Ethers.js, Solidity, OpenZeppelin, Remix IDE, Ethereum, EVM (Ethereum Virtual Machine), Blockchain, Etherscan, JavaScript, Mocha Testcases, Solidity code coverage
 - dapp:
   - React.js, Web3.js, Nginx, Metamask wallet
 - Docker and Containers
