@@ -21,10 +21,7 @@ module.exports = {
     remote: {
       url: "https://hardhat-network.onrender.com",
     },
-    eth_local_net_1: {
-      url: "http://127.0.0.1:<PORT>/",
-    },
-    eth_local_net_2: {
+    eth_local_net: {
       url: "http://127.0.0.1:<PORT>/",
     },
     ganache: {
