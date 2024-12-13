@@ -62,6 +62,19 @@ class Utils {
       JSON.stringify(dapp_contract_info, null, 2)
     );
   }
+
+  static async getSigner() {
+    var signer = null;
+    if (hre.network.name === "eth_local_net") {
+      signer = new hre.ethers.Wallet(
+        hre.network.config.signer_private_key,
+        new hre.ethers.JsonRpcProvider(hre.network.config.url)
+      );
+    } else {
+      signer = (await ethers.getSigners())[0];
+    }
+    return signer;
+  }
 }
 
 class BaseContract {
@@ -81,6 +94,8 @@ class BaseContract {
   }
 
   async deployContract() {
+    const signer = await Utils.getSigner();
+
     const maxRetries = 6;
     const retryDelaySeconds = 10;
 
@@ -89,7 +104,8 @@ class BaseContract {
     while (retries < maxRetries) {
       try {
         const Contract = await hre.ethers.getContractFactory(
-          this.contract_name
+          this.contract_name,
+          signer
         );
         this.contract = await Contract.deploy(
           ...this.contract_constructor_args
