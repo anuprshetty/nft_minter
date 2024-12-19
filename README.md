@@ -2,6 +2,9 @@
 
 A dapp for minting NFTs.
 
+<img src="media/arrow.gif" alt="arrow.gif" width="20px" /> [**_Launch dapp_**](https://nft-minter.onrender.com/)
+<br><br>
+
 ![nft_minter_dapp](media/nft_minter_dapp.png)
 
 ## Smart Contracts
